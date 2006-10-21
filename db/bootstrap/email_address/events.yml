@@ -1,0 +1,11 @@
+<%
+type = <<-EOV
+type: 'EmailAddress::Event'
+EOV
+%>
+
+verify:
+  id: 601
+  name: verify
+  long_description: The email address has been verified
+  <%= type %>

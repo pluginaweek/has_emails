@@ -1,0 +1,17 @@
+<%
+type = <<-EOV
+type: 'EmailAddress::State'
+EOV
+%>
+
+unverified:
+  id: 601
+  name: unverified
+  long_description: The email address is unverified
+  <%= type %>
+  
+verified:
+  id: 602
+  name: verified
+  long_description: The email adress has been verified
+  <%= type %>
