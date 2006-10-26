@@ -12,7 +12,8 @@ module PluginAWeek #:nodoc:
         #
         def acts_as_emailable(*args, &extension)
           create_options = {
-            :foreign_key_name => :emailable
+            :foreign_key_name => :emailable,
+            :extend => EmailAddress::StateExtension
           }
           options, email_address_class, association_id = create_acts_association(:email_address, create_options, {}, *args, &extension)
           
