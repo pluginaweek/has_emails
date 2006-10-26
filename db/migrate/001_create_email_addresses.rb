@@ -5,7 +5,7 @@ class CreateEmailAddresses < ActiveRecord::Migration
   
   def self.up
     create_table :email_addresses do |t|
-      t.column :emailable_id,       :integer,   :null => false, :references => nil
+      t.column :emailable_id,       :integer,   :null => false, :unsigned => true, :references => nil
       t.column :local_name,         :string,    :null => false, :limit => 382
       t.column :domain,             :string,    :null => false, :limit => 382
       t.column :verification_code,  :string,    :limit => 40
