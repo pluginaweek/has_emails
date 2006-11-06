@@ -1,3 +1,13 @@
+# acts
+require 'acts_as_messageable'
+require 'acts_association_helper'
+
+# validations
+require 'validates_as_email'
+
+# miscellaneous
+require 'token_generator'
+
 require File.join(File.dirname(__FILE__), '..', 'app', 'mailer', 'application_mailer')
 
 module PluginAWeek #:nodoc:
@@ -47,4 +57,8 @@ module PluginAWeek #:nodoc:
       end
     end
   end
+end
+
+ActiveRecord::Base.class_eval do
+  include PluginAWeek::Acts::Emailable
 end
