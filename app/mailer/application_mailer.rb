@@ -58,7 +58,7 @@ class ApplicationMailer < ActionMailer::Base
   private
   def initialize_defaults(method_name) #:nodoc
     sent_on Time.now
-    @subject_prefix ||= @@subject_prefix.dup
+    @subject_prefix ||= @@default_subject_prefix.dup
     super
   end
   
