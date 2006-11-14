@@ -33,6 +33,27 @@ module PluginAWeek #:nodoc:
             acts_as_messageable message_options
           end
           
+          email_address_class::Email.class_eval do
+            # Add support for strings as from and recipient
+            [:from, :recipient].each do |method|
+              eval <<-end_eval
+                def #{method}_with_spec
+                  #{method}_without_spec || #{method}_spec
+                end
+                alias_method_chain :#{method}, :spec
+                
+                def #{method}_with_spec=(value)
+                  if value.is_a?(String)
+                    self.#{method}_spec = value
+                  else
+                    self.#{method}_without_spec = value
+                  end
+                end
+                alias_method_chain :#{method}=, :spec
+              end_eval
+            end
+          end
+          
           # Add support for messageable records that have email_addres
           # attributes.
           email_address_class::Email::Recipient.class_eval do
