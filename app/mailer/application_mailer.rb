@@ -1,5 +1,4 @@
 # Provides base operations for emailing
-#
 class ApplicationMailer < ActionMailer::Base
   @@default_subject_prefix = "[#{File.basename(File.expand_path(RAILS_ROOT)).camelize}] "
   cattr_accessor :default_subject_prefix
@@ -21,7 +20,6 @@ class ApplicationMailer < ActionMailer::Base
   
   # Sets or gets the subject of the email.  All subjects are prefixed with a
   # value indicating the application it is coming from.
-  #
   def subject(*parameters)
     if parameters.empty?
       super
@@ -32,7 +30,6 @@ class ApplicationMailer < ActionMailer::Base
   alias_method :subject=, :subject
   
   # Delivers an email based on the content in the specified email
-  #
   def email(email)
     from    email.from
     to      email.to
@@ -44,38 +41,52 @@ class ApplicationMailer < ActionMailer::Base
   end
   
   # Queues the current e-mail that has been constructed
-  #
   def queue
-    @email = Email.create(
-      :to => to,
-      :cc => cc,
-      :bcc => bcc,
-      :subject => subject,
-      :body => body
-    )
+    if from.is_a?(String)
+      klass = Email.new
+    else
+      klass = from.class::Email
+    end
+    
+    klass.transaction do
+      # Create the main email
+      email = klass.create(
+        :from => from,
+        :subject => subject,
+        :body => body
+      )
+      
+      # Add recipients
+      email.to = to
+      email.cc = cc
+      email.bcc = bcc
+      
+      email.queue!
+    end
   end
   
   private
   def initialize_defaults(method_name) #:nodoc
-    sent_on Time.now
+    @sent_on ||= Time.now
     @subject_prefix ||= @@default_subject_prefix.dup
+    @recipients ||= []
+    @cc ||= []
+    @bcc ||= []
+    
     super
   end
   
   def quote_address_if_necessary_with_conversion(address, charset) #:nodoc
-    if address.is_a?(String)
-      address = quote_address_if_necessary_without_email_address(address, charset)
-    else
-      if Email::Recipient === address
-        address = address.messageable
-      elsif EmailAddress === address
-        address = address.to_s
-      elsif address.respond_to?(:email_address)
-        address = address.email_address
+    # Uses is_a? instead of === because of AssociationProxy
+    if !address.is_a?(Array)
+      if !(String === address || EmailAddress === address || Email::Recipient === address)
+        address = EmailAddress.convert_from(address)
       end
       
-      quote_address_if_necessary(address, charset)
+      address = address.to_s
     end
+    
+    quote_address_if_necessary_without_conversion(address, charset)
   end
   alias_method_chain :quote_address_if_necessary, :conversion
 end

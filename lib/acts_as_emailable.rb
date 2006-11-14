@@ -33,11 +33,28 @@ module PluginAWeek #:nodoc:
             acts_as_messageable message_options
           end
           
+          # Add support for messageable records that have email_addres
+          # attributes.
           email_address_class::Email::Recipient.class_eval do
+            # Returns the model that is messageable.
+            def messageable_with_spec
+              messageable_without_spec || messageable_spec
+            end
             alias_method_chain :messageable, :spec
+            
+            # If messageable is a string, then sets the spec, otherwise uses
+            # the original messageable setter
+            def messageable_with_spec=(value)
+              if value.is_a?(String)
+                self.messageable_spec = value
+              else
+                self.messageable_without_spec = value
+              end
+            end
             alias_method_chain :messageable=, :spec
           end
           
+          # Add associations for all emails the model has sent and received
           has_many  :received_emails,
                       :through => association_id
           has_many  :sent_emails,
