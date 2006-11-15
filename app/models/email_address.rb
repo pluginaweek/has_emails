@@ -26,8 +26,20 @@ class EmailAddress < ActiveRecord::Base
     end
     
     # Determines if the email spec is a valid address using the RFC822 spec
-    def self.is_valid?(spec)
+    def is_valid?(spec)
       !RFC822::EmailAddress.match(spec).nil?
+    end
+    
+    # Finds an email-address with the given spec
+    def find_by_spec(number, spec, *args)
+      if match = RFC822::EmailAddress.match(spec)
+        local_name = match.captures[0]
+        domain = match.captures[1]
+        
+        with_scope(:find => {:conditions => ['local_name = ? AND domain = ?', local_name, domain]}) do
+          find(number, *args)
+        end
+      end
     end
   end
   
