@@ -8,8 +8,6 @@ require 'validates_as_email'
 # miscellaneous
 require 'token_generator'
 
-require File.join(File.dirname(__FILE__), '..', 'app', 'mailer', 'application_mailer')
-
 module PluginAWeek #:nodoc:
   module Acts #:nodoc:
     module Emailable
