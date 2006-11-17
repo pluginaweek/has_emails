@@ -79,6 +79,18 @@ class EmailAddress < ActiveRecord::Base
     @spec || (@spec = local_name + "@" + domain if local_name? && domain?)
   end
   
+  # Gets the name of the person whose email address this is.  Default is an
+  # empty string.  Override this if you want it to appear in with_name
+  def name
+    ''
+  end
+  
+  # Returns a string version of the email address plus any name like
+  # "John Doe <john.doe@gmail.com>"
+  def with_name
+    name.blank? ? to_s : "#{name} <#{to_s}>"
+  end
+  
   # Returns the full email address
   def to_s #:nodoc
     spec

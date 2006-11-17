@@ -21,6 +21,22 @@ class Email < Message #:nodoc:
       EmailAddress.convert_from(messageable)
     end
     
+    # Gets the name of the recipient.  Default is an empty string.  Override
+    # this if you want it to appear in with_name
+    def name
+      if messageable && messageable.is_a?(EmailAddress)
+        messageable.name
+      else
+        ''
+      end
+    end
+    
+    # Returns a string version of the email address plus any name like
+    # "John Doe <john.doe@gmail.com>"
+    def with_name
+      name.blank? ? to_s : "#{name} <#{to_s}>"
+    end
+    
     # Returns a string version of the email address
     def to_s #:nodoc
       email_address.to_s
