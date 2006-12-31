@@ -1,7 +1,7 @@
 class AddEmails < ActiveRecord::Migration
   def self.up
-    add_column :messages, :from_spec, :string, :limit => 384
-    add_column :messages, :recipient_spec,   :string, :limit => 384
+    add_column :messages, :from_spec,       :string, :limit => 384
+    add_column :messages, :recipient_spec,  :string, :limit => 384
   end
 
   def self.down
