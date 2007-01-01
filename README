@@ -1,4 +1,24 @@
-ActsAsEmailable
-==========
+= acts_as_emailable
 
-Description goes here
+acts_as_emailable .
+
+== Resources
+
+Wiki
+
+* http://wiki.pluginaweek.org/Acts_as_emailable
+
+Announcement
+
+* http://www.pluginaweek.org/
+
+Source
+
+* http://svn.pluginaweek.org/trunk/plugins/active_record/acts/acts_as_emailable
+
+Development
+
+* http://dev.pluginaweek.org/browser/trunk/plugins/active_record/acts/acts_as_emailable
+
+== Description
+
