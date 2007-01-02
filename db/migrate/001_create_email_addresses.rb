@@ -1,6 +1,12 @@
 class CreateEmailAddresses < ActiveRecord::Migration
+  class State < ActiveRecord::Base; end
+  class Event < ActiveRecord::Base; end
+  class StateChange < ActiveRecord::Base; end
+  
   class EmailAddress < ActiveRecord::Base
-    acts_as_state_machine :initial => :dummy
+    class State < State; end
+    class Event < Event; end
+    class StateChange < StateChange; end
   end
   
   def self.up
@@ -18,11 +24,11 @@ class CreateEmailAddresses < ActiveRecord::Migration
     add_index :email_addresses, [:local_name, :domain], :unique => true
     add_index :email_addresses, :verification_code, :unique => true
     
-    EmailAddress::State.migrate_up
+    PluginAWeek::Acts::StateMachine.migrate_up(EmailAddress)
   end
   
   def self.down
-    EmailAddress::State.migrate_down
+    PluginAWeek::Acts::StateMachine.migrate_down(EmailAddress)
     
     drop_table :email_addresses
   end
