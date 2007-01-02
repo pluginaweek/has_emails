@@ -15,8 +15,8 @@ class CreateEmailAddresses < ActiveRecord::Migration
       t.column :updated_at,         :datetime,  :null => false
       t.column :deleted_at,         :datetime
     end
-    add_index :email_addresses, [:local_name, :domain], :unique => true, :name => 'unique_email_addresses'
-    add_index :email_addresses, :verification_code, :unique => true, :name => 'unique_email_address_verification_codes'
+    add_index :email_addresses, [:local_name, :domain], :unique => true
+    add_index :email_addresses, :verification_code, :unique => true
     
     EmailAddress::State.migrate_up
   end
