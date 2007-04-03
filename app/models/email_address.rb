@@ -1,5 +1,4 @@
 # Represents a verified or unverified email address being used by a user
-#
 class EmailAddress < ActiveRecord::Base
   include TokenGenerator
   
@@ -43,10 +42,18 @@ class EmailAddress < ActiveRecord::Base
     end
   end
   
+  attr_protected            :local_name,
+                            :domain
   
-  attr_protected            :local_name, :domain
-  
+  # Ensure the e-mail address has been verified
   acts_as_state_machine     :initial => :unverified
+  
+  # Add messaging capabilities.  This will give us an email_box.
+  acts_as_messageable       :email,
+                              :class_name => 'Email'
+  
+  belongs_to                :emailable,
+                              :polymorphic => true
   
   validates_presence_of     :spec
   validates_confirmation_of :spec
@@ -54,6 +61,8 @@ class EmailAddress < ActiveRecord::Base
                               :scope => :domain
   validates_as_email        :spec
   
+  # Ensure that the e-mail address has a verification code that can be sent
+  # to the user
   before_create             :create_verification_code
   
   state :unverified
