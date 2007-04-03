@@ -42,10 +42,9 @@ class ApplicationMailer < ActionMailer::Base
   
   # Queues the current e-mail that has been constructed
   def queue
-    klass = email_class
-    klass.transaction do
+    Email.transaction do
       # Create the main email
-      email = klass.create(
+      email = Email.create(
         :from => from,
         :subject => subject,
         :body => body
@@ -74,7 +73,7 @@ class ApplicationMailer < ActionMailer::Base
   def quote_address_if_necessary_with_conversion(address, charset) #:nodoc
     # Uses is_a? instead of === because of AssociationProxy
     if !address.is_a?(Array)
-      if EmailAddress === address || Email::Recipient === address
+      if EmailAddress === address || EmailRecipient === address
         address = address.with_name
       elsif !(String === address)
         address = EmailAddress.convert_from(address).to_s
@@ -84,11 +83,4 @@ class ApplicationMailer < ActionMailer::Base
     quote_address_if_necessary_without_conversion(address, charset)
   end
   alias_method_chain :quote_address_if_necessary, :conversion
-  
-  # The email class that is used when queueing emails.  If you are using strings
-  # along with models that do not allow cross-model messaging, you will want to
-  # override this method to determine what class should be for strings.
-  def email_class
-    from.is_a?(String) ? Email : from.class::Email
-  end
 end

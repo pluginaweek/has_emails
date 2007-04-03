@@ -2,14 +2,17 @@
 #
 class Email < Message
   with_options(
-    :class_name => 'Email::Recipient',
+    :class_name => 'EmailRecipient',
     :foreign_key => 'message_id',
     :order => 'position ASC',
     :extend => Email::EasyBuildRecipientExtension
   ) do |e|
-    e.has_many    :to,  :kind => 'to'
-    e.has_many    :cc,  :kind => 'cc'
-    e.has_many    :bcc, :kind => 'bcc'
+    e.has_many    :to,
+                    :conditions => ['kind = ?', 'to']
+    e.has_many    :cc,
+                    :conditions => ['kind = ?', 'cc']
+    e.has_many    :bcc,
+                    :conditions => ['kind = ?', 'bcc']
   end
   
   belongs_to      :reference_message,
@@ -54,6 +57,25 @@ class Email < Message
     end_eval
   end
   
+    # Add support for strings as from and recipient
+    [:from, :recipient].each do |method|
+      eval <<-end_eval
+        def #{method}_with_spec
+          #{method}_without_spec || #{method}_spec
+        end
+        alias_method_chain :#{method}, :spec
+        
+        def #{method}_with_spec=(value)
+          if value.is_a?(String)
+            self.#{method}_spec = value
+          else
+            self.#{method}_without_spec = value
+          end
+        end
+        alias_method_chain :#{method}=, :spec
+      end_eval
+    end
+    
   # Returns all of the recipients in EmailAddress form
   def all_addresses
     to_addresses + cc_addresses + bcc_addresses

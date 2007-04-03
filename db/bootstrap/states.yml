@@ -1,6 +1,6 @@
 <%
 type = <<-EOV
-type: 'EmailAddress::State'
+owner_type: 'EmailAddress'
 EOV
 %>
 

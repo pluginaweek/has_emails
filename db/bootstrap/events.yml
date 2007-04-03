@@ -1,6 +1,6 @@
 <%
 type = <<-EOV
-type: 'EmailAddress::Event'
+owner_type: 'EmailAddress'
 EOV
 %>
 

@@ -8,19 +8,8 @@ class Email < Message #:nodoc:
       recipient.email_address.to_s == EmailAddress.convert_from(record).to_s
     end
     
-    def get_recipient_class(record) #:nodoc:
-      if !(Message::Recipient === record)
-         message_class_name = @owner.class.name.demodulize
-        begin
-          if record.is_a?(String)
-            @owner.class::Recipient
-          else
-            recipient = "#{record.class}::#{message_class_name}::Recipient".constantize
-          end
-        rescue NameError
-          raise ArgumentError, "#{record.class} must be a class that acts_as_messageable"
-        end
-      end
+    def recipient_class
+      EmailRecipient
     end
   end
 end

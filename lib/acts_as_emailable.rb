@@ -2,6 +2,9 @@
 require 'acts_as_messageable'
 require 'acts_association_helper'
 
+# associations
+require 'class_associations'
+
 # validations
 require 'validates_as_email'
 
@@ -16,68 +19,27 @@ module PluginAWeek #:nodoc:
       end
       
       module MacroMethods
-        #
-        #
+        # 
         def acts_as_emailable(*args, &extension)
-          create_options = {
-            :foreign_key_name => :emailable,
+          default_options = {
+            :as => :emailable,
             :extend => EmailAddress::StateExtension
           }
-          options, email_address_class, association_id = create_acts_association(:email_address, create_options, {}, *args, &extension)
-          
-          message_options = {:class_name => 'Email'}
-          message_options[:cross_model_emailing] = options[:cross_model_emailing] if options[:cross_model_emailing]
-          email_address_class.class_eval do
-            acts_as_messageable message_options
-          end
-          
-          email_address_class::Email.class_eval do
-            # Add support for strings as from and recipient
-            [:from, :recipient].each do |method|
-              eval <<-end_eval
-                def #{method}_with_spec
-                  #{method}_without_spec || #{method}_spec
-                end
-                alias_method_chain :#{method}, :spec
-                
-                def #{method}_with_spec=(value)
-                  if value.is_a?(String)
-                    self.#{method}_spec = value
-                  else
-                    self.#{method}_without_spec = value
-                  end
-                end
-                alias_method_chain :#{method}=, :spec
-              end_eval
-            end
-          end
-          
-          # Add support for messageable records that have email_addres
-          # attributes.
-          email_address_class::Email::Recipient.class_eval do
-            # Returns the model that is messageable.
-            def messageable_with_spec
-              messageable_without_spec || messageable_spec
-            end
-            alias_method_chain :messageable, :spec
-            
-            # If messageable is a string, then sets the spec, otherwise uses
-            # the original messageable setter
-            def messageable_with_spec=(value)
-              if value.is_a?(String)
-                self.messageable_spec = value
-              else
-                self.messageable_without_spec = value
-              end
-            end
-            alias_method_chain :messageable=, :spec
-          end
+          association_id, klass, options = create_acts_association(:email_address, default_options, *args, &extension)
           
           # Add associations for all emails the model has sent and received
           has_many  :received_emails,
                       :through => association_id
           has_many  :sent_emails,
                       :through => association_id
+          
+          # Add class-level email_addresses association
+          plural_association_id = options[:count] == :many ? association_id : association_id.to_s.pluralize
+          klass = class << self; self; end
+          klass.class_eval do
+            has_many  plural_association_id,
+                        :as => options[:as]
+          end
         end
       end
       
@@ -86,7 +48,6 @@ module PluginAWeek #:nodoc:
       
       module InstanceMethods
         # Contains all of the emails that have been sent and received
-        #
         def email_box
           @email_box ||= MessageBox.new(received_emails, sent_emails)
         end
