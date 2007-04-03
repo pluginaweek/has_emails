@@ -54,7 +54,10 @@ class ApplicationMailer < ActionMailer::Base
       email.to = to
       email.cc = cc
       email.bcc = bcc
-      
+      puts email.valid?
+      puts email.errors.inspect
+      puts email.to.inspect
+      puts email.to.first.inspect
       email.queue!
     end
   end

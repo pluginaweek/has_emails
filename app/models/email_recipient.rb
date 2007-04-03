@@ -13,8 +13,6 @@ class EmailRecipient < MessageRecipient
   validates_xor_presence_of :messageable_id,
                             :messageable_spec
   
-  alias_attribute           :messageable, :messageable_spec
-  
   # Returns the model that is messageable.
   def messageable_with_spec
     messageable_without_spec || messageable_spec
