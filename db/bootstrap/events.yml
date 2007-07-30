@@ -1,11 +1,4 @@
-<%
-type = <<-EOV
-owner_type: 'EmailAddress'
-EOV
-%>
-
 verify:
   id: 601
   name: verify
-  long_description: The email address has been verified
-  <%= type %>
+  owner_type: EmailAddress

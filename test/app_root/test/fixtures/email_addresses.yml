@@ -1,0 +1,32 @@
+bob:
+  id: 1
+  emailable_id: 1
+  emailable_type: User
+  spec: bob@bob.com
+  verification_code: c2e4f499bf610fa95b8ee3a4e8013dbe
+  code_expiry: <%= Time.now.to_s(:db) %>
+  created_at: <%= Time.now.to_s(:db) %>
+  updated_at: <%= Time.now.to_s(:db) %>
+  state_id: 601
+  
+john:
+  id: 2
+  emailable_id: 2
+  emailable_type: User
+  spec: john@john.com
+  verification_code: 1d3955ee0d05ce5bb847f29d56b990cc
+  code_expiry: <%= Time.now.to_s(:db) %>
+  created_at: <%= Time.now.to_s(:db) %>
+  updated_at: <%= Time.now.to_s(:db) %>
+  state_id: 602
+  
+mary:
+  id: 3
+  emailable_id: 3
+  emailable_type: User
+  spec: mary@mary.com
+  verification_code: 8323145e816cb063d405f5e365d14807
+  code_expiry: <%= Time.now.to_s(:db) %>
+  created_at: <%= Time.now.to_s(:db) %>
+  updated_at: <%= Time.now.to_s(:db) %>
+  state_id: 602

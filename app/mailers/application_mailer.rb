@@ -44,7 +44,7 @@ class ApplicationMailer < ActionMailer::Base
   def queue
     Email.transaction do
       # Create the main email
-      email = Email.create(
+      email = Email.create!(
         :from => from,
         :subject => subject,
         :body => body
@@ -54,10 +54,6 @@ class ApplicationMailer < ActionMailer::Base
       email.to = to
       email.cc = cc
       email.bcc = bcc
-      puts email.valid?
-      puts email.errors.inspect
-      puts email.to.inspect
-      puts email.to.first.inspect
       email.queue!
     end
   end

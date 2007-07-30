@@ -1,17 +1,16 @@
 class EmailRecipient < MessageRecipient
+  validates_as_email_address  :messageable_spec,
+                                :allow_nil => true
+  validates_presence_of       :messageable_id,
+                                :if => :messageable_id_required?
+  
+  before_save :ensure_exclusive_references
+  
   # Included for support of recipients from emails sent by a string-based
   # sender
-  belongs_to                :message,
-                              :class_name => 'Email',
-                              :foreign_key => 'message_id'
-  alias_method              :email, :message
-  alias_method              :email=, :message=
-  alias_attribute           :email_id, :message_id
-  
-  validates_as_email        :messageable_spec,
-                              :allow_nil => true
-  validates_xor_presence_of :messageable_id,
-                            :messageable_spec
+  alias_method    :email, :message
+  alias_method    :email=, :message=
+  alias_attribute :email_id, :message_id
   
   # Returns the model that is messageable.
   def messageable_with_spec
@@ -56,6 +55,11 @@ class EmailRecipient < MessageRecipient
     email_address.to_s
   end
   
+  # Actually delivers the email
+  def deliver
+    ApplicationMailer.deliver_email(self)
+  end
+  
   private
   def validate_on_create #:nodoc:
     begin
@@ -64,5 +68,25 @@ class EmailRecipient < MessageRecipient
     rescue
       errors.add 'messageable_id', 'must be a string, have a email_address attribute, or be a class that acts_as_emailable'
     end
+  end
+  
+  # Strings are allowed to participate in messaging
+  def only_model_participants?
+    false
+  end
+  
+  # Does the messageable_id column need to be specified?
+  def messageable_id_required?
+    messageable_spec.nil?
+  end
+  
+  # Ensures that the country id/user region combo is not set at the same time as
+  # the region id
+  def ensure_exclusive_references
+    if messageable_id_required?
+      self.messageable_spec = nil
+    end
+    
+    true
   end
 end

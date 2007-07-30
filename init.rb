@@ -1,1 +1,1 @@
-require 'acts_as_emailable'
+require 'has_emails'

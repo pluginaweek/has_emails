@@ -1,4 +1,4 @@
-# Represents a verified or unverified email address being used by a user
+# Represents a valid RFC822 email address
 class EmailAddress < ActiveRecord::Base
   include TokenGenerator
   
@@ -25,67 +25,51 @@ class EmailAddress < ActiveRecord::Base
     end
     
     # Determines if the email spec is a valid address using the RFC822 spec
-    def is_valid?(spec)
+    def valid?(spec)
       !RFC822::EmailAddress.match(spec).nil?
-    end
-    
-    # Finds an email-address with the given spec
-    def find_by_spec(number, spec, *args)
-      if match = RFC822::EmailAddress.match(spec)
-        local_name = match.captures[0]
-        domain = match.captures[1]
-        
-        with_scope(:find => {:conditions => ['local_name = ? AND domain = ?', local_name, domain]}) do
-          find(number, *args)
-        end
-      end
     end
   end
   
-  attr_protected            :local_name,
-                            :domain
-  
-  # Ensure the e-mail address has been verified
-  acts_as_state_machine     :initial => :unverified
+  # Support e-mail address verification
+  has_states    :initial => :unverified
   
   # Add messaging capabilities.  This will give us an email_box.
-  acts_as_messageable       :email,
-                              :class_name => 'Email'
+  has_messages  :emails,
+                  :message_class => 'Email'
+  belongs_to    :emailable,
+                  :polymorphic => true
   
-  belongs_to                :emailable,
-                              :polymorphic => true
-  
-  validates_presence_of     :spec
-  validates_confirmation_of :spec
-  validates_uniqueness_of   :local_name,
-                              :scope => :domain
-  validates_as_email        :spec
+  validates_presence_of       :spec
+  validates_uniqueness_of     :spec
+  validates_as_email_address  :spec
   
   # Ensure that the e-mail address has a verification code that can be sent
   # to the user
-  before_create             :create_verification_code
+  before_create :create_verification_code
   
-  state :unverified
-  state :verified
+  state :unverified, :verified
   
   # Verifies that the email address is valid
   event :verify do
-    transition_to :verified, :from => :verified
+    transition_to :verified, :from => :unverified
   end
   
   # Sets the full address
-  def spec=(value)
-    @spec = value
-    
-    if match = RFC822::EmailAddress.match(value)
-      self.local_name = match.captures[0]
-      self.domain = match.captures[1]
-    end
+  def spec=(new_spec)
+    @local_name = @domain = nil
+    write_attribute(:spec, new_spec)
   end
   
-  # Returns the full email address
-  def spec
-    @spec || (@spec = local_name + "@" + domain if local_name? && domain?)
+  # The part of the e-mail address before the @
+  def local_name
+    parse_spec if !@local_name
+    @local_name
+  end
+  
+  # The part of the e-mail address after the @
+  def domain
+    parse_spec if !@domain
+    @domain
   end
   
   # Gets the name of the person whose email address this is.  Default is an
@@ -105,13 +89,20 @@ class EmailAddress < ActiveRecord::Base
     spec
   end
   
-  protected
+  private
   # Creates the verification code that must be used when validating the email address
   def create_verification_code
-    self.verification_code = generate_token(40) do |token|
+    self.verification_code = generate_token(32) do |token|
       self.class.find_by_verification_code(token).nil?
     end
     
     self.code_expiry = 48.hour.from_now
+  end
+  
+  def parse_spec
+    if !@local_name && !@domain && match = RFC822::EmailAddress.match(spec)
+      @local_name = match.captures[0]
+      @domain = match.captures[1]
+    end
   end
 end

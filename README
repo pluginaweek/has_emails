@@ -1,12 +1,12 @@
-= acts_as_emailable
+= has_emails
 
-acts_as_emailable .
+has_emails .
 
 == Resources
 
 Wiki
 
-* http://wiki.pluginaweek.org/Acts_as_emailable
+* http://wiki.pluginaweek.org/Has_emails
 
 Announcement
 
@@ -14,11 +14,11 @@ Announcement
 
 Source
 
-* http://svn.pluginaweek.org/trunk/plugins/active_record/acts/acts_as_emailable
+* http://svn.pluginaweek.org/trunk/plugins/active_record/has/has_emails
 
 Development
 
-* http://dev.pluginaweek.org/browser/trunk/plugins/active_record/acts/acts_as_emailable
+* http://dev.pluginaweek.org/browser/trunk/plugins/active_record/has/has_emails
 
 == Description
 
