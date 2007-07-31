@@ -1,4 +1,4 @@
-# 
+# An email which has been sent to one or more recipients
 class SenderEmail < SenderMessage
   with_options(
     :class_name => 'EmailRecipient',
@@ -8,12 +8,12 @@ class SenderEmail < SenderMessage
   ) do |e|
     e.has_many  :to,
                   :conditions => ['kind = ?', 'to'],
-                  :extend => [MessageRecipient::EasyBuildToExtension, EmailRecipient::EasyBuildExtension]
+                  :extend => [MessageRecipientToBuildExtension, EmailRecipientBuildExtension]
     e.has_many  :cc,
                   :conditions => ['kind = ?', 'cc'],
-                  :extend => [MessageRecipient::EasyBuildCcExtension, EmailRecipient::EasyBuildExtension]
+                  :extend => [MessageRecipientCcBuildExtension, EmailRecipientBuildExtension]
     e.has_many  :bcc,
                   :conditions => ['kind = ?', 'bcc'],
-                  :extend => [MessageRecipient::EasyBuildBccExtension, EmailRecipient::EasyBuildExtension]
+                  :extend => [MessageRecipientBccBuildExtension, EmailRecipientBuildExtension]
   end
 end

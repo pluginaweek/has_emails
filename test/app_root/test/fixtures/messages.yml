@@ -22,8 +22,15 @@ bob_to_mary:
   type: ReceiverMessage
   state_id: 530
   
-sent_from_mary:
+bob_to_marketing:
   id: 4
+  owner_id: 4
+  created_at: <%= Time.now.to_s(:db) %>
+  type: ReceiverMessage
+  state_id: 530
+  
+sent_from_mary:
+  id: 5
   owner_id: 3
   owner_type: EmailAddress
   subject: "FW: Funny joke"
@@ -33,14 +40,14 @@ sent_from_mary:
   state_id: 511
   
 mary_to_john:
-  id: 5
-  owner_id: 3
+  id: 6
+  owner_id: 5
   created_at: <%= Time.now.to_s(:db) %>
   type: ReceiverMessage
   state_id: 530
   
 unsent_from_bob:
-  id: 6
+  id: 7
   owner_id: 1
   owner_type: EmailAddress
   subject: "Another funny joke"
@@ -50,7 +57,7 @@ unsent_from_bob:
   state_id: 510
   
 queued_from_bob:
-  id: 7
+  id: 8
   owner_id: 1
   owner_type: EmailAddress
   subject: ""

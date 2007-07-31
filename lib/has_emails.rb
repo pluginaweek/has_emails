@@ -1,6 +1,7 @@
 require 'has_messages'
 require 'validates_as_email_address'
-require 'token_generator'
+require 'acts_as_tokenized'
+require 'nested_has_many_through'
 
 module PluginAWeek #:nodoc:
   module Has #:nodoc:

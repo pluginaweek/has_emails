@@ -150,8 +150,12 @@ class EmailAddressTest < Test::Unit::TestCase
     assert_equal 'me.com', e.domain
   end
   
-  def test_name_should_be_blank
-    assert_equal '', email_addresses(:bob).name
+  def test_name_should_be_blank_by_default
+    assert_equal '', EmailAddress.new.name
+  end
+  
+  def test_should_set_name_from_attributes
+    assert_equal 'bob', EmailAddress.new(:name => 'bob').name
   end
   
   def test_should_return_spec_for_with_name_when_name_is_blank

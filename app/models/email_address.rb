@@ -1,15 +1,14 @@
 # Represents a valid RFC822 email address
 class EmailAddress < ActiveRecord::Base
-  include TokenGenerator
-  
   class << self
     # Converts the specified record to an EmailAddress.  It will convert the
     # following types:
     # 1. String
     # 2. A record with an email_address attribute
     # 
-    # An ArgumentError is raised if it doesn't match the above and is not
-    # already an EmailAddress
+    # If an EmailAddress is specified, the same model will be returned.  An
+    # ArgumentError is raised if it doesn't match the above and is not already
+    # an EmailAddress.
     def convert_from(record)
       if record
         if EmailAddress === record
@@ -17,7 +16,9 @@ class EmailAddress < ActiveRecord::Base
         elsif String === record
           EmailAddress.new(:spec => record)
         elsif record.respond_to?(:email_address)
-          EmailAddress.new(:spec => record.email_address)
+          address = EmailAddress.new(:spec => record.email_address)
+          address.name = record.name if record.respond_to?(:name)
+          address
         else
           raise ArgumentError, "Cannot convert #{record.class} to an EmailAddress"
         end
@@ -29,6 +30,8 @@ class EmailAddress < ActiveRecord::Base
       !RFC822::EmailAddress.match(spec).nil?
     end
   end
+  
+  acts_as_tokenized :token_field => 'verification_code', :token_length => 32
   
   # Support e-mail address verification
   has_states    :initial => :unverified
@@ -43,9 +46,11 @@ class EmailAddress < ActiveRecord::Base
   validates_uniqueness_of     :spec
   validates_as_email_address  :spec
   
+  attr_accessor :name
+  
   # Ensure that the e-mail address has a verification code that can be sent
   # to the user
-  before_create :create_verification_code
+  before_create :set_code_expiry
   
   state :unverified, :verified
   
@@ -75,7 +80,7 @@ class EmailAddress < ActiveRecord::Base
   # Gets the name of the person whose email address this is.  Default is an
   # empty string.  Override this if you want it to appear in with_name
   def name
-    ''
+    @name || ''
   end
   
   # Returns a string version of the email address plus any name like
@@ -90,12 +95,8 @@ class EmailAddress < ActiveRecord::Base
   end
   
   private
-  # Creates the verification code that must be used when validating the email address
-  def create_verification_code
-    self.verification_code = generate_token(32) do |token|
-      self.class.find_by_verification_code(token).nil?
-    end
-    
+  # Sets the time at which the verification code will expire
+  def set_code_expiry
     self.code_expiry = 48.hour.from_now
   end
   

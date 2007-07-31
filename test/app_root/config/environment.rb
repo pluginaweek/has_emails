@@ -28,7 +28,8 @@ Rails::Initializer.run do |config|
     'dry_validity_assertions',
     'has_states',
     'has_messages',
-    'token_generator'
+    'acts_as_tokenized',
+    'nested_has_many_through'
   ]
 end
 

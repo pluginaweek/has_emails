@@ -5,7 +5,8 @@ $:.unshift("#{File.dirname(__FILE__)}/../../../has/has_states/lib")
 $:.unshift("#{File.dirname(__FILE__)}/../../../miscellaneous/dry_transaction_rollbacks/lib")
 $:.unshift("#{File.dirname(__FILE__)}/../../../validations/validates_as_email_address/lib")
 $:.unshift("#{File.dirname(__FILE__)}/../../../../ruby/object/eval_call/lib")
-$:.unshift("#{File.dirname(__FILE__)}/../../../../third_party/token_generator/lib")
+$:.unshift("#{File.dirname(__FILE__)}/../../../../third_party/acts_as_tokenized/lib")
+$:.unshift("#{File.dirname(__FILE__)}/../../../../third_party/nested_has_many_through/lib")
 
 # Load the plugin testing framework
 $:.unshift("#{File.dirname(__FILE__)}/../../../../test/plugin_test_helper/lib")
@@ -30,7 +31,7 @@ ActiveRecord::Migrator.migrate("#{RAILS_ROOT}/db/migrate")
     Fixtures.new(ActiveRecord::Base.connection, table_name, nil, File.join(bootstrap_path, table_name)).insert_fixtures
   end
 end
-SenderEmail
+
 class Test::Unit::TestCase #:nodoc:
   def self.require_fixture_classes(table_names=nil)
     # Don't allow fixture classes to be required because classes like Message are

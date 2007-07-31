@@ -18,9 +18,28 @@ bob_to_mary:
   state_id: 521
   type: EmailRecipient
   
-mary_to_john:
+bob_to_random:
   id: 3
-  message_id: 4
+  message_id: 1
+  messageable_spec: random@random.com
+  kind: cc
+  position: 2
+  state_id: 521
+  type: EmailRecipient
+  
+bob_to_marketing:
+  id: 4
+  message_id: 1
+  messageable_id: 1
+  messageable_type: Department
+  kind: cc
+  position: 3
+  state_id: 521
+  type: EmailRecipient
+  
+mary_to_john:
+  id: 5
+  message_id: 5
   messageable_id: 2
   messageable_type: EmailAddress
   kind: bcc
@@ -29,8 +48,8 @@ mary_to_john:
   type: EmailRecipient
   
 unsent_bob_to_john:
-  id: 4
-  message_id: 6
+  id: 6
+  message_id: 7
   messageable_id: 2
   messageable_type: EmailAddress
   kind: to
@@ -39,8 +58,8 @@ unsent_bob_to_john:
   type: EmailRecipient
   
 unsent_bob_to_mary:
-  id: 5
-  message_id: 6
+  id: 7
+  message_id: 7
   messageable_id: 3
   messageable_type: EmailAddress
   kind: cc
@@ -49,8 +68,8 @@ unsent_bob_to_mary:
   type: EmailRecipient
   
 queued_bob_to_john:
-  id: 6
-  message_id: 7
+  id: 8
+  message_id: 8
   messageable_id: 2
   messageable_type: User
   kind: to
