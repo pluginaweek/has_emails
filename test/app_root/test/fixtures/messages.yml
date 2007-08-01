@@ -1,67 +1,39 @@
 sent_from_bob:
   id: 1
-  owner_id: 1
-  owner_type: EmailAddress
+  sender_id: 1
+  sender_type: EmailAddress
   subject: "Funny joke"
   body: "Why can't dinosaurs talk? ...Because they're dead!"
   created_at: <%= Time.now.to_s(:db) %>
-  type: SenderEmail
-  state_id: 511
-  
-bob_to_john:
-  id: 2
-  owner_id: 1
-  created_at: <%= Time.now.to_s(:db) %>
-  type: ReceiverMessage
-  state_id: 531
-  
-bob_to_mary:
-  id: 3
-  owner_id: 2
-  created_at: <%= Time.now.to_s(:db) %>
-  type: ReceiverMessage
-  state_id: 530
-  
-bob_to_marketing:
-  id: 4
-  owner_id: 4
-  created_at: <%= Time.now.to_s(:db) %>
-  type: ReceiverMessage
-  state_id: 530
+  state_id: 501
+  type: Email
   
 sent_from_mary:
-  id: 5
-  owner_id: 3
-  owner_type: EmailAddress
+  id: 2
+  sender_id: 3
+  sender_type: EmailAddress
   subject: "FW: Funny joke"
   body: "> Why can't dinosaurs talk? ...Because they're dead!"
   created_at: <%= Time.now.to_s(:db) %>
-  type: SenderEmail
-  state_id: 511
-  
-mary_to_john:
-  id: 6
-  owner_id: 5
-  created_at: <%= Time.now.to_s(:db) %>
-  type: ReceiverMessage
-  state_id: 530
+  state_id: 501
+  type: Email
   
 unsent_from_bob:
-  id: 7
-  owner_id: 1
-  owner_type: EmailAddress
+  id: 3
+  sender_id: 1
+  sender_type: EmailAddress
   subject: "Another funny joke"
   body: "Where do cows go on a date? ...To the moovies!"
   created_at: <%= Time.now.to_s(:db) %>
-  type: SenderEmail
-  state_id: 510
+  state_id: 500
+  type: Email
   
 queued_from_bob:
-  id: 8
-  owner_id: 1
-  owner_type: EmailAddress
+  id: 4
+  sender_id: 1
+  sender_type: EmailAddress
   subject: ""
   body: ""
   created_at: <%= Time.now.to_s(:db) %>
-  type: SenderEmail
-  state_id: 511
+  state_id: 501
+  type: Email

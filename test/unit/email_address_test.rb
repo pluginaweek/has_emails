@@ -73,7 +73,7 @@ class EmailAddressTest < Test::Unit::TestCase
   end
   
   def test_should_have_received_emails_association
-    assert_equal [messages(:bob_to_john), messages(:mary_to_john)], email_addresses(:john).received_emails
+    assert_equal [messages(:sent_from_bob), messages(:sent_from_mary)], email_addresses(:john).received_emails.map(&:email)
   end
   
   def test_initial_state_should_be_unverified

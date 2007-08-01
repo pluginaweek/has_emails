@@ -4,7 +4,7 @@ class HasEmailsTest < Test::Unit::TestCase
   fixtures :users, :email_addresses, :messages, :message_recipients
   
   def test_should_generate_received_association
-    assert_equal [messages(:bob_to_john), messages(:mary_to_john)], users(:john).received_emails
+    assert_equal [messages(:sent_from_bob), messages(:sent_from_mary)], users(:john).received_emails.map(&:email)
   end
   
   def test_should_generate_unsent_association

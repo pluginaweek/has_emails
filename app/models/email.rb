@@ -1,5 +1,5 @@
 # An email which has been sent to one or more recipients
-class SenderEmail < SenderMessage
+class Email < Message
   with_options(
     :class_name => 'EmailRecipient',
     :foreign_key => 'message_id',

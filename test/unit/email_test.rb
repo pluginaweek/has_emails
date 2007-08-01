@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
-class SenderEmailTest < Test::Unit::TestCase
+class EmailTest < Test::Unit::TestCase
   fixtures :users, :email_addresses, :messages, :message_recipients
   
   def test_should_be_valid

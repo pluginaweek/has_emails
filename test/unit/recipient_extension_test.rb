@@ -12,13 +12,13 @@ class RecipientExtensionTest < Test::Unit::TestCase
     assert_equal ['john@john.com', 'test@me.com'], @email.to.map(&:email_address).map(&:to_s)
   end
   
-  def test_should_input_messageable
+  def test_should_input_receiver
     @email.to << email_addresses(:bob)
     assert_equal [email_addresses(:john), email_addresses(:bob)], @email.to_receivers
   end
   
   def test_should_input_message_recipients
-    @email.to << EmailRecipient.new(:messageable => email_addresses(:bob), :kind => 'to')
+    @email.to << EmailRecipient.new(:receiver => email_addresses(:bob), :kind => 'to')
     assert_equal [email_addresses(:john), email_addresses(:bob)], @email.to_receivers
   end
   
@@ -27,13 +27,13 @@ class RecipientExtensionTest < Test::Unit::TestCase
     assert_equal ['john@john.com', 'test@me.com'], @email.to.map(&:email_address).map(&:to_s)
   end
   
-  def test_should_push_messageable
+  def test_should_push_receiver
     @email.to.push(email_addresses(:bob))
     assert_equal [email_addresses(:john), email_addresses(:bob)], @email.to_receivers
   end
   
   def test_should_push_message_recipients
-    @email.to.push(EmailRecipient.new(:messageable => email_addresses(:bob), :kind => 'to'))
+    @email.to.push(EmailRecipient.new(:receiver => email_addresses(:bob), :kind => 'to'))
     assert_equal [email_addresses(:john), email_addresses(:bob)], @email.to_receivers
   end
   
@@ -42,13 +42,13 @@ class RecipientExtensionTest < Test::Unit::TestCase
     assert_equal ['john@john.com', 'test@me.com'], @email.to.map(&:email_address).map(&:to_s)
   end
   
-  def test_should_concat_messageable
+  def test_should_concat_receiver
     @email.to.concat([email_addresses(:bob)])
     assert_equal [email_addresses(:john), email_addresses(:bob)], @email.to_receivers
   end
   
   def test_should_concat_message_recipients
-    @email.to.concat([EmailRecipient.new(:messageable => email_addresses(:bob), :kind => 'to')])
+    @email.to.concat([EmailRecipient.new(:receiver => email_addresses(:bob), :kind => 'to')])
     assert_equal [email_addresses(:john), email_addresses(:bob)], @email.to_receivers
   end
   
@@ -57,7 +57,7 @@ class RecipientExtensionTest < Test::Unit::TestCase
     assert_equal [], @email.to_receivers
   end
   
-  def test_should_delete_messageable
+  def test_should_delete_receiver
     @email.to.delete(email_addresses(:john))
     assert_equal [], @email.to_receivers
   end
@@ -72,7 +72,7 @@ class RecipientExtensionTest < Test::Unit::TestCase
     assert_equal ['bob@bob.com'], @email.to.map(&:email_address).map(&:to_s)
   end
   
-  def test_should_replace_messageable
+  def test_should_replace_receiver
     @email.to.replace([email_addresses(:bob)])
     assert_equal [email_addresses(:bob)], @email.to_receivers
   end

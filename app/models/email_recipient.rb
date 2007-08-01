@@ -1,6 +1,6 @@
 # Represents a recipient on an email
 class EmailRecipient < MessageRecipient
-  validates_as_email_address  :messageable_spec,
+  validates_as_email_address  :receiver_spec,
                                 :allow_nil => true
   
   before_save :ensure_exclusive_references
@@ -15,28 +15,28 @@ class EmailRecipient < MessageRecipient
             :to_s,
               :to => :email_address
   
-  # Returns the model that is messageable.  This can be a string if being sent
+  # Returns the receiver of the message.  This can be a string if being sent
   # to an arbitrary e-mail address.
-  def messageable_with_spec
-    messageable_without_spec || messageable_spec
+  def receiver_with_spec
+    receiver_without_spec || receiver_spec
   end
-  alias_method_chain :messageable, :spec
+  alias_method_chain :receiver, :spec
   
-  # If messageable is a string, then sets the spec, otherwise uses
-  # the original messageable setter
-  def messageable_with_spec=(value)
+  # If receiver is a string, then sets the spec, otherwise uses the original
+  # receiver setter
+  def receiver_with_spec=(value)
     if value.is_a?(String)
-      self.messageable_spec = value
+      self.receiver_spec = value
     else
-      self.messageable_without_spec = value
+      self.receiver_without_spec = value
     end
   end
-  alias_method_chain :messageable=, :spec
+  alias_method_chain :receiver=, :spec
   
-  # Converts the messageable object into an Email Address, whether it be a
-  # string, EmailAddress, or other model type
+  # Converts the receiver into an Email Address, whether it be a string,
+  # EmailAddress, or other model type
   def email_address
-    EmailAddress.convert_from(messageable)
+    EmailAddress.convert_from(receiver)
   end
   
   # Actually delivers the email to therecipient
@@ -47,26 +47,26 @@ class EmailRecipient < MessageRecipient
   private
   def validate_on_create #:nodoc:
     begin
-      email_address if messageable
+      email_address if receiver
       true
     rescue ArgumentError
-      errors.add 'messageable_id', 'must be a string, have a email_address attribute, or be a class that has_email_addresses'
+      errors.add 'receiver_id', 'must be a string, have a email_address attribute, or be a class that has_email_addresses'
     end
   end
   
   # Strings are allowed to participate in messaging
   def model_participant?
-    messageable_id && messageable_type || messageable_spec.nil?
+    receiver_id && receiver_type || receiver_spec.nil?
   end
   
   # Ensures that the country id/user region combo is not set at the same time as
   # the region id
   def ensure_exclusive_references
     if model_participant?
-      self.messageable_spec = nil
+      self.receiver_spec = nil
     else
-      self.messageable_id = nil
-      self.messageable_type = nil
+      self.receiver_id = nil
+      self.receiver_type = nil
     end
     
     true
