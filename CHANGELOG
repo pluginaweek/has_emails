@@ -1,3 +1,5 @@
 *SVN*
 
+* Convert dos newlines to unix newlines
+
 * Update against latest changes to has_message
