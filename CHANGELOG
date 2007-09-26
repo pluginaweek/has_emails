@@ -2,6 +2,8 @@
 
 *0.0.1* (September 26th, 2007)
 
+* Allow the sender of emails to be an arbitrary string email address
+
 * Add documentation
 
 * Move test fixtures out of the test application root directory
