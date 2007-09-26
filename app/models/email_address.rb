@@ -4,11 +4,12 @@ class EmailAddress < ActiveRecord::Base
     # Converts the specified record to an EmailAddress.  It will convert the
     # following types:
     # 1. String
-    # 2. A record with an email_address attribute
+    # 2. A record with an +email_address+ String attribute
+    # 3. A record with an +email_address+ association
+    # 4. A record with an +email_addresses+ association (first record will be chosen)
     # 
     # If an EmailAddress is specified, the same model will be returned.  An
-    # ArgumentError is raised if it doesn't match the above and is not already
-    # an EmailAddress.
+    # ArgumentError is raised if it doesn't match any of the above criteria.
     def convert_from(record)
       if record
         if EmailAddress === record
@@ -16,9 +17,15 @@ class EmailAddress < ActiveRecord::Base
         elsif String === record
           EmailAddress.new(:spec => record)
         elsif record.respond_to?(:email_address)
-          address = EmailAddress.new(:spec => record.email_address)
-          address.name = record.name if record.respond_to?(:name)
-          address
+          if record.email_address.is_a?(String)
+            address = EmailAddress.new(:spec => record.email_address)
+            address.name = record.name if record.respond_to?(:name)
+            address
+          else
+            record.email_address
+          end
+        elsif record.respond_to?(:email_addresses)
+          record.email_addresses.first
         else
           raise ArgumentError, "Cannot convert #{record.class} to an EmailAddress"
         end

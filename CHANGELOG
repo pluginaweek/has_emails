@@ -2,6 +2,8 @@
 
 *0.0.1* (September 26th, 2007)
 
+* Support converting models with an email_address/email_addresses association
+
 * Allow the sender of emails to be an arbitrary string email address
 
 * Add documentation

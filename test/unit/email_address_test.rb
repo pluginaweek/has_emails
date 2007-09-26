@@ -3,22 +3,41 @@ require File.dirname(__FILE__) + '/../test_helper'
 class EmailAddressTest < Test::Unit::TestCase
   fixtures :departments, :users, :email_addresses, :messages, :message_recipients
   
-  def test_should_convert_email_address_to_same_model
+  def test_should_convert_email_address_using_same_model
     e = email_addresses(:bob)
     assert_same e, EmailAddress.convert_from(e)
   end
   
-  def test_should_convert_string_to_email_address
+  def test_should_convert_string
     e = EmailAddress.convert_from('test@email.com')
     assert_instance_of EmailAddress, e
     assert_equal 'test@email.com', e.spec
   end
   
-  def test_should_convert_record_with_email_address_column_to_email_address
+  def test_should_convert_record_with_email_address_column
     department = departments(:marketing)
     e = EmailAddress.convert_from(department)
     assert_instance_of EmailAddress, e
-    assert_equal department.email_address, e.spec
+    assert_equal 'marketing@companyxyz.com', e.spec
+  end
+  
+  def test_should_convert_record_with_email_address_association
+    user = users(:bob)
+    class << user
+      def email_address
+        EmailAddress.new(:spec => 'test@email.com')
+      end
+    end
+    
+    e = EmailAddress.convert_from(user)
+    assert_instance_of EmailAddress, e
+    assert_equal 'test@email.com', e.spec
+  end
+  
+  def test_should_convert_record_with_email_addresses_association_using_first_email_address
+    e = EmailAddress.convert_from(users(:bob))
+    assert_instance_of EmailAddress, e
+    assert_equal 'bob@bob.com', e.spec
   end
   
   def test_should_raise_exception_if_converting_unknown_class_to_email_address
