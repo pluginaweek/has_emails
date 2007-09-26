@@ -19,6 +19,7 @@ Rails::Initializer.run do |config|
     'appable_plugins',
     'plugin_migrations',
     'has_states',
+    'has_finder',
     'has_messages',
     'acts_as_tokenized',
     'nested_has_many_through',
@@ -28,3 +29,5 @@ Rails::Initializer.run do |config|
   config.cache_classes = false
   config.whiny_nils = true
 end
+
+Plugin.mix_code_from(:mailers => /.+_mailer/)

@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class EmailRecipientTest < Test::Unit::TestCase
-  fixtures :users, :email_addresses, :messages, :message_recipients
+  fixtures :users, :email_addresses, :messages, :message_recipients, :state_changes
   
   def test_recipient_with_email_address_should_be_valid
     assert_valid message_recipients(:bob_to_john)
@@ -13,6 +13,10 @@ class EmailRecipientTest < Test::Unit::TestCase
   
   def test_recipient_with_email_address_attribute_should_be_valid
     assert_valid message_recipients(:bob_to_marketing)
+  end
+  
+  def test_should_require_receiver_spec
+    assert_invalid message_recipients(:bob_to_random), :receiver_spec, nil
   end
   
   def test_should_require_minimum_length_for_receiver_spec
@@ -66,10 +70,10 @@ class EmailRecipientTest < Test::Unit::TestCase
     assert_equal 'test@me.com', r.receiver_spec
   end
   
-  def test_should_set_receiver_if_receiver_is_not_string
+  def test_should_set_receiver_and_receiver_spec_if_receiver_is_not_string
     r = EmailRecipient.new
     r.receiver = email_addresses(:john)
-    assert_nil r.receiver_spec
+    assert_equal 'john@john.com', r.receiver_spec
     assert_equal email_addresses(:john), r.receiver
   end
 end

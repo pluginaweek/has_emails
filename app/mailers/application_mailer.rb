@@ -24,20 +24,20 @@ class ApplicationMailer < ActionMailer::Base
     if parameters.empty?
       super
     else
-      super("#{subject_prefix}" + super)
+      super(subject_prefix + super)
     end
   end
   alias_method :subject=, :subject
   
   # Delivers an email based on the content in the specified email
   def email(email)
-    @from     = email.from
-    @to       = email.to
-    @cc       = email.cc
-    @bcc      = email.bcc
-    @subject  = email.subject
-    @body     = email.body
-    @sent_on  = Time.now
+    @from       = email.sender
+    @recipients = email.to
+    @cc         = email.cc
+    @bcc        = email.bcc
+    @subject    = email.subject
+    @body       = email.body
+    @sent_on    = email.sent_at || Time.now
   end
   
   # Queues the current e-mail that has been constructed
@@ -45,15 +45,15 @@ class ApplicationMailer < ActionMailer::Base
     Email.transaction do
       # Create the main email
       email = Email.create!(
-        :from => from,
+        :sender => from,
         :subject => subject,
         :body => body
       )
       
       # Add recipients
-      email.to = to
-      email.cc = cc
-      email.bcc = bcc
+      email.to = [to].flatten
+      email.cc = [cc].flatten
+      email.bcc = [bcc].flatten
       email.queue!
     end
   end

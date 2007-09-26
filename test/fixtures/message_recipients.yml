@@ -3,9 +3,10 @@ bob_to_john:
   message_id: 1
   receiver_id: 2
   receiver_type: EmailAddress
+  receiver_spec: john@john.com
   kind: to
   position: 1
-  state_id: 512
+  state_id: 511
   type: EmailRecipient
   
 bob_to_mary:
@@ -13,9 +14,10 @@ bob_to_mary:
   message_id: 1
   receiver_id: 3
   receiver_type: EmailAddress
+  receiver_spec: mary@mary.com
   kind: cc
   position: 1
-  state_id: 511
+  state_id: 510
   type: EmailRecipient
   
 bob_to_random:
@@ -24,7 +26,7 @@ bob_to_random:
   receiver_spec: random@random.com
   kind: cc
   position: 2
-  state_id: 511
+  state_id: 510
   type: EmailRecipient
   
 bob_to_marketing:
@@ -32,9 +34,10 @@ bob_to_marketing:
   message_id: 1
   receiver_id: 1
   receiver_type: Department
+  receiver_spec: marketing@companyxyz.com
   kind: cc
   position: 3
-  state_id: 511
+  state_id: 510
   type: EmailRecipient
   
 mary_to_john:
@@ -42,9 +45,10 @@ mary_to_john:
   message_id: 2
   receiver_id: 2
   receiver_type: EmailAddress
+  receiver_spec: john@john.com
   kind: bcc
   position: 1
-  state_id: 511
+  state_id: 510
   type: EmailRecipient
   
 unsent_bob_to_john:
@@ -52,6 +56,7 @@ unsent_bob_to_john:
   message_id: 3
   receiver_id: 2
   receiver_type: EmailAddress
+  receiver_spec: john@john.com
   kind: to
   position: 1
   state_id: 510
@@ -62,6 +67,7 @@ unsent_bob_to_mary:
   message_id: 3
   receiver_id: 3
   receiver_type: EmailAddress
+  receiver_spec: mary@mary.com
   kind: cc
   position: 1
   state_id: 510
@@ -72,6 +78,7 @@ queued_bob_to_john:
   message_id: 4
   receiver_id: 2
   receiver_type: User
+  receiver_spec: john@john.com
   kind: to
   position: 1
   state_id: 510

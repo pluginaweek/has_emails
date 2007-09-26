@@ -1,10 +1,29 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class EmailTest < Test::Unit::TestCase
-  fixtures :users, :email_addresses, :messages, :message_recipients
+  fixtures :users, :email_addresses, :messages, :message_recipients, :state_changes
   
   def test_should_be_valid
     assert_valid messages(:sent_from_bob)
+  end
+  
+  def test_should_require_sender_spec
+    assert_invalid messages(:sent_from_bob), :sender_spec, nil
+  end
+  
+  def test_should_require_minimum_length_for_sender_spec
+    assert_invalid messages(:sent_from_bob), :sender_spec, 'ab'
+    assert_valid messages(:sent_from_bob), :sender_spec, 'a@a'
+  end
+  
+  def test_should_require_maximum_length_for_sender_spec
+    assert_invalid messages(:sent_from_bob), :sender_spec, 'a' * 300 + '@' + 'a' * 20
+    assert_valid messages(:sent_from_bob), :sender_spec, 'a' * 300 + '@' + 'a' * 19
+  end
+  
+  def test_should_require_specific_format_for_sender_spec
+    assert_invalid messages(:sent_from_bob), :sender_spec, 'aaaaaaaaaa'
+    assert_valid messages(:sent_from_bob), :sender_spec, 'aaa@aaa.com'
   end
   
   def test_to_should_create_email_recipient
@@ -35,13 +54,13 @@ class EmailTest < Test::Unit::TestCase
     assert_nil email.sender_type
   end
   
-  def test_should_set_sender_if_sender_is_known_email_address
+  def test_should_set_sender_and_sender_spec_if_sender_is_known_email_address
     email = messages(:unsent_from_stranger)
     email.sender_spec = nil
     email.sender = email_addresses(:john)
     assert_equal 2, email.sender_id
     assert_equal 'EmailAddress', email.sender_type
-    assert_nil email.sender_spec
+    assert_equal 'john@john.com', email.sender_spec
   end
   
   def test_sender_email_address_should_convert_sender_spec_if_arbitrary_email_address_used

@@ -2,6 +2,14 @@
 
 *0.0.1* (September 26th, 2007)
 
+* Refactor has_email_address/has_email_addresses so that new associations for unsent/sent emails isn't created for has_email_address
+
+* Add state changes fixtures for tests
+
+* Add tests for ApplicationMailer
+
+* Add support for tracking the original email address for senders/recipients even if the email address changes on the associated model (i.e. EmailAddress/User/etc.)
+
 * Support converting models with an email_address/email_addresses association
 
 * Allow the sender of emails to be an arbitrary string email address

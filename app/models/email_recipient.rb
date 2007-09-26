@@ -1,5 +1,6 @@
 # Represents a recipient on an email
 class EmailRecipient < MessageRecipient
+  validates_presence_of       :receiver_spec
   validates_as_email_address  :receiver_spec,
                                 :allow_nil => true
   
@@ -10,9 +11,7 @@ class EmailRecipient < MessageRecipient
   alias_method    :email=, :message=
   alias_attribute :email_id, :message_id
   
-  delegate  :name,
-            :with_name,
-            :to_s,
+  delegate  :to_s,
               :to => :email_address
   
   # Returns the receiver of the message.  This can be a string if being sent
@@ -25,23 +24,28 @@ class EmailRecipient < MessageRecipient
   # If receiver is a string, then sets the spec, otherwise uses the original
   # receiver setter
   def receiver_with_spec=(value)
-    if value.is_a?(String)
-      self.receiver_spec = value
-    else
-      self.receiver_without_spec = value
-    end
+    self.receiver_spec = EmailAddress.convert_from(value).spec
+    self.receiver_without_spec = value if !value.is_a?(String)
   end
   alias_method_chain :receiver=, :spec
   
   # Converts the receiver into an Email Address, whether it be a string,
   # EmailAddress, or other model type
   def email_address
-    EmailAddress.convert_from(receiver)
+    EmailAddress.convert_from(receiver_spec)
   end
   
-  # Actually delivers the email to therecipient
-  def deliver
-    ApplicationMailer.deliver_email(self)
+  # The name of the person whose receiving the email
+  def name
+    receiver_without_spec ? EmailAddress.convert_from(receiver_without_spec).name : email_address.name
+  end
+  
+  # Returns a string version of the email address plus any name like
+  # "John Doe <john.doe@gmail.com>"..
+  def with_name
+    address = self.email_address
+    address.name = self.name
+    address.with_name
   end
   
   private

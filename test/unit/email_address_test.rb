@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class EmailAddressTest < Test::Unit::TestCase
-  fixtures :departments, :users, :email_addresses, :messages, :message_recipients
+  fixtures :departments, :users, :email_addresses, :messages, :message_recipients, :state_changes
   
   def test_should_convert_email_address_using_same_model
     e = email_addresses(:bob)

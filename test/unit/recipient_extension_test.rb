@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class RecipientExtensionTest < Test::Unit::TestCase
-  fixtures :users, :email_addresses, :messages, :message_recipients
+  fixtures :users, :email_addresses, :messages, :message_recipients, :state_changes
   
   def setup
     @email = messages(:unsent_from_bob)

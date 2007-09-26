@@ -60,7 +60,7 @@ column in your users table, you can add emailing support like so:
 
 === Creating new emails
 
-  email = user.unsent_emails.build
+  email = user.emails.build
   email.to << [user1, email_address1, 'someone@somewhere.com']
   email.subject = 'Hey!'
   email.body = 'Does anyone want to go out tonight?'
@@ -80,7 +80,7 @@ EmailRecipient class so that it can be stored in the database.
 
   forward = email.forward
   forward.body = 'Interested?'
-  forward.send!
+  forward.deliver!
 
 === External process messaging
 

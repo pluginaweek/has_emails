@@ -39,4 +39,38 @@ class Test::Unit::TestCase #:nodoc:
     # going to throw an error since the states and events have not yet been
     # loaded
   end
+  
+  # Freezes time for running email tests
+  def freeze_time(frozen_time = 946702800)
+    Time.instance_eval do
+      frozen_now = (frozen_time)
+      alias :original_now :now
+      alias :now :frozen_now
+    end
+    
+    if block_given?
+      begin
+        yield
+      ensure
+        unfreeze_time
+      end
+    end
+  end
+  
+  # Restores the original method for time
+  def unfreeze_time
+    Time.instance_eval do
+      alias :now :original_now
+    end    
+  end
+end
+
+class Time
+  def self.frozen_now=(val)
+    @frozen_now = val
+  end
+  
+  def self.frozen_now
+    Time.at(@frozen_now || 946702800)
+  end
 end
