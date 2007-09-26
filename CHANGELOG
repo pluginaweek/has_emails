@@ -1,5 +1,11 @@
 *SVN*
 
+*0.0.1* (September 26th, 2007)
+
+* Add documentation
+
+* Move test fixtures out of the test application root directory
+
 * Convert dos newlines to unix newlines
 
-* Update against latest changes to has_message
+* Update against latest changes to has_messages

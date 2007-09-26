@@ -5,18 +5,50 @@ require 'nested_has_many_through'
 
 module PluginAWeek #:nodoc:
   module Has #:nodoc:
+    # Adds support for sending emails to models
     module Emails
       def self.included(base) #:nodoc:
         base.extend(MacroMethods)
       end
       
       module MacroMethods
+        # Adds support for emailing instances of this model through multiple
+        # email addresses.
         # 
+        # == Generated associations
+        # 
+        # The following +has_many+ associations are created for models that support
+        # emailing:
+        # * +email_recipients+ - A collection of EmailRecipients in which this record is a receiver
+        # * +unsent_emails+ - A collection of Emails which have not yet been sent
+        # * +sent_emails+ - A collection of Emails which have already been sent
         def has_email_addresses
-          # 
-          has_many  :email_addresses,
-                      :as => :emailable,
-                      :extend => EmailAddress::StateExtension
+          create_email_address_associations(:many, :email_addresses)
+        end
+        
+        # Adds support for emailing instances of this model through a single
+        # email address.
+        # 
+        # == Generated associations
+        # 
+        # The following +has_many+ associations are created for models that support
+        # emailing:
+        # * +email_recipients+ - A collection of EmailRecipients in which this record is a receiver
+        # * +unsent_emails+ - A collection of Emails which have not yet been sent
+        # * +sent_emails+ - A collection of Emails which have already been sent
+        def has_email_address
+          create_email_address_associations(:one, :email_address)
+        end
+        
+        private
+        def create_email_address_associations(cardinality, association_id)
+          options = {
+            :class_name => 'EmailAddress',
+            :as => :emailable,
+            :dependent => :destroy
+          }
+          
+          send("has_#{cardinality}", association_id, options)
           
           # Add associations for all emails the model has sent and received
           has_many  :email_recipients,
@@ -27,14 +59,6 @@ module PluginAWeek #:nodoc:
                       :through => :email_addresses
           
           include PluginAWeek::Has::Emails::InstanceMethods
-        end
-        
-        # 
-        def has_email_address
-          has_one :email_address,
-                    :as => :emailable
-          
-          has_email_addresses
         end
       end
       

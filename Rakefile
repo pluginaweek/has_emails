@@ -31,13 +31,15 @@ spec = Gem::Specification.new do |s|
   s.name            = PKG_NAME
   s.version         = PKG_VERSION
   s.platform        = Gem::Platform::RUBY
-  s.summary         = ''
+  s.summary         = 'Adds support for emailing capabilities between ActiveRecord models.'
   
-  s.files           = FileList['{app,db,lib,tasks,test}/**/*'].to_a + %w(CHANGELOG init.rb MIT-LICENSE Rakefile README)
+  s.files           = FileList['{app,db,lib,test}/**/*'].to_a + %w(CHANGELOG init.rb MIT-LICENSE Rakefile README)
   s.require_path    = 'lib'
   s.autorequire     = 'has_emails'
   s.has_rdoc        = true
   s.test_files      = Dir['test/**/*_test.rb']
+  s.add_dependency  'has_messages', '>= 0.0.1'
+  s.add_dependency  'validates_as_email_address', '>= 0.0.1'
   
   s.author          = 'Aaron Pfeifer, Neil Abraham'
   s.email           = 'info@pluginaweek.org'

@@ -2,6 +2,7 @@
 $:.unshift("#{File.dirname(__FILE__)}/../../../associations/class_associations/lib")
 $:.unshift("#{File.dirname(__FILE__)}/../../../has/has_messages/lib")
 $:.unshift("#{File.dirname(__FILE__)}/../../../has/has_states/lib")
+$:.unshift("#{File.dirname(__FILE__)}/../../../miscellaneous/custom_callbacks/lib")
 $:.unshift("#{File.dirname(__FILE__)}/../../../miscellaneous/dry_transaction_rollbacks/lib")
 $:.unshift("#{File.dirname(__FILE__)}/../../../validations/validates_as_email_address/lib")
 $:.unshift("#{File.dirname(__FILE__)}/../../../../ruby/object/eval_call/lib")

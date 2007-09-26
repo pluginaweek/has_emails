@@ -1,8 +1,12 @@
 = has_emails
 
-has_emails .
++has_emails+ adds support for emailing capabilities between ActiveRecord models.
 
 == Resources
+
+API
+
+* http://api.pluginaweek.org/has_emails
 
 Wiki
 
@@ -10,7 +14,7 @@ Wiki
 
 Announcement
 
-* http://www.pluginaweek.org/
+* http://www.pluginaweek.org
 
 Source
 
@@ -22,3 +26,105 @@ Development
 
 == Description
 
+Emailing between users and other parts of a system is a fairly common feature in
+web applications, especially for those that support social networking.  Emailing
+doesn't necessarily need to be between users, but can also act as a way for the
+web application to send notices and other notifications to users.
+
+Rails already provides ActionMailer as a way of sending emails.  However, the
+framework does not provide an easy way to persist emails, track their status, and
+process them asynchronously.  Designing and building this type of framework can
+become complex and cumbersome and takes away from the focus of the web application.
+This plugin helps ease that process by providing a complete implementation for
+sending and receiving emails to and between models in your application.
+
+== Usage
+
+=== Adding emailing support
+
+If you want to use the built-in support for email addresses (using the EmailAddress
+model), you can add emailing support for users like so:
+
+  class User < ActiveRecord::Base
+    has_email_address
+    # has_email_addresses if you want to support multiple addresses
+  end
+
+On the other hand, if you already have the email address for users stored as a
+column in your users table, you can add emailing support like so:
+
+  class User < ActiveRecord::Base
+    has_messages  :emails,
+                    :message_class => 'Email'
+  end
+
+=== Creating new emails
+
+  email = user.unsent_emails.build
+  email.to << [user1, email_address1, 'someone@somewhere.com']
+  email.subject = 'Hey!'
+  email.body = 'Does anyone want to go out tonight?'
+  email.deliver!
+
+As can be seen in the above example, you can use Users, EmailAddresses, or even
+Strings as recipients in emails.  Each will be automatically converted to the
+EmailRecipient class so that it can be stored in the database.
+
+=== Replying to emails
+
+  reply = email.reply_to_all
+  reply.body = "I'd love to go out!"
+  reply.deliver!
+
+=== Forwarding emails
+
+  forward = email.forward
+  forward.body = 'Interested?'
+  forward.send!
+
+=== External process messaging
+
+In addition to delivering emails immediately, you can also *queue* emails so
+that an external application processes and delivers them.  This is especially
+useful when you want to asynchronously send e-mails so that it doesn't block the
+user interface on your web application.
+
+To queue emails for external processing, you can simply use the <tt>queue!</tt>
+event, rather than <tt>deliver!</tt>.  This will indicate to any external processes
+that the email is ready to be sent.  The external process can then invoke <tt>deliver!</tt>
+whenever it is ready to send the queued email.
+
+=== Running migrations
+
+To migrate the tables required for this plugin, you can either run the
+migration from the command line like so:
+
+  rake db:migrate:plugins PLUGIN=has_emails
+
+or (more ideally) generate a migration file that will integrate into your main
+application's migration path:
+
+  ruby script/generate plugin_migration has_emails
+
+== Testing
+
+Before you can run any tests, the following gems must be installed:
+* plugin_test_helper[http://wiki.pluginaweek.org/Plugin_test_helper]
+* dry_validity_assertions[http://wiki.pluginaweek.org/Dry_validity_assertions]
+
+== Dependencies
+
+This plugin depends on the presence of the following plugins:
+* has_messages[http://wiki.pluginaweek.org/Has_messages]
+
+This plugin is also a plugin+.  That means that it contains a slice of an
+application, such as models and migrations.  To test or use a plugin+, you
+must have the following plugins/gems installed:
+* plugin_dependencies[http://wiki.pluginaweek.org/Plugin_dependencies]
+* loaded_plugins[http://wiki.pluginaweek.org/Loaded_plugins]
+* appable_plugins[http://wiki.pluginaweek.org/Appable_plugins]
+* plugin_migrations[http://wiki.pluginaweek.org/Plugin_migrations]
+
+Instead of installing each individual plugin+ feature, you can install them all
+at once using the plugins+[http://wiki.pluginaweek.org/Plugins_plus] meta package,
+which contains all additional features.

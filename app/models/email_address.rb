@@ -25,7 +25,7 @@ class EmailAddress < ActiveRecord::Base
       end
     end
     
-    # Determines if the email spec is a valid address using the RFC822 spec
+    # Determines if the given spec is a valid address using the RFC822 spec
     def valid?(spec)
       !RFC822::EmailAddress.match(spec).nil?
     end
@@ -43,9 +43,13 @@ class EmailAddress < ActiveRecord::Base
                   :polymorphic => true
   
   validates_presence_of       :spec
-  validates_uniqueness_of     :spec
-  validates_as_email_address  :spec
   
+  with_options(:allow_nil => true) do |klass|
+    klass.validates_uniqueness_of     :spec
+    klass.validates_as_email_address  :spec
+  end
+  
+  # The name of the person who owns this email address
   attr_accessor :name
   
   # Ensure that the e-mail address has a verification code that can be sent
@@ -84,12 +88,13 @@ class EmailAddress < ActiveRecord::Base
   end
   
   # Returns a string version of the email address plus any name like
-  # "John Doe <john.doe@gmail.com>"
+  # "John Doe <john.doe@gmail.com>".  In order to have a valid name within the
+  # string, you must override +name+.
   def with_name
     name.blank? ? to_s : "#{name} <#{to_s}>"
   end
   
-  # Returns the full email address
+  # Returns the full email address (without the name)
   def to_s #:nodoc
     spec
   end
@@ -100,6 +105,8 @@ class EmailAddress < ActiveRecord::Base
     self.code_expiry = 48.hour.from_now
   end
   
+  # Parses the current spec and sets +@local_name+ and +@domain+ based on the
+  # matching groups within the regular expression
   def parse_spec
     if !@local_name && !@domain && match = RFC822::EmailAddress.match(spec)
       @local_name = match.captures[0]

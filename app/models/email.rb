@@ -1,4 +1,6 @@
-# An email which has been sent to one or more recipients
+# Represents an email which has been sent to one or more recipients.  This is
+# essentially the same as the Message class, but overrides the +to+, +cc+, and +bcc+
+# associations to that proper instances of the MessageRecipient class are created.
 class Email < Message
   with_options(
     :class_name => 'EmailRecipient',
