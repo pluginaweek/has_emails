@@ -116,6 +116,7 @@ Before you can run any tests, the following gems must be installed:
 
 This plugin depends on the presence of the following plugins:
 * has_messages[http://wiki.pluginaweek.org/Has_messages]
+* validates_as_email_address[http://wiki.pluginaweek.org/Validates_as_email_address]
 
 This plugin is also a plugin+.  That means that it contains a slice of an
 application, such as models and migrations.  To test or use a plugin+, you
