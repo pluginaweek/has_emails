@@ -4,25 +4,25 @@
 
 == Resources
 
-API
+Announcement
 
-* http://api.pluginaweek.org/has_emails
+* http://www.pluginaweek.org
 
 Wiki
 
 * http://wiki.pluginaweek.org/Has_emails
 
-Announcement
+API
 
-* http://www.pluginaweek.org
-
-Source
-
-* http://svn.pluginaweek.org/trunk/plugins/active_record/has/has_emails
+* http://api.pluginaweek.org/has_emails
 
 Development
 
 * http://dev.pluginaweek.org/browser/trunk/plugins/active_record/has/has_emails
+
+Source
+
+* http://svn.pluginaweek.org/trunk/plugins/active_record/has/has_emails
 
 == Description
 
