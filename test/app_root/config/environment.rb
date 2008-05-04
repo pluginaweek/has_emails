@@ -1,33 +1,10 @@
 require 'config/boot'
-
-$:.unshift("#{RAILS_ROOT}/../../../../../rails/plugin_dependencies/lib")
-begin
-  require 'plugin_dependencies'
-rescue Exception => e
-end
+require "#{File.dirname(__FILE__)}/../../../../plugins_plus/boot"
 
 Rails::Initializer.run do |config|
-  config.plugin_paths.concat([
-    "#{RAILS_ROOT}/../../..",
-    "#{RAILS_ROOT}/../../../../migrations",
-    "#{RAILS_ROOT}/../../../../../rails",
-    "#{RAILS_ROOT}/../../../../../test",
-    "#{RAILS_ROOT}/../../../../../third_party"
-  ])
-  config.plugins = [
-    'loaded_plugins',
-    'appable_plugins',
-    'plugin_migrations',
-    'has_states',
-    'has_finder',
-    'has_messages',
-    'acts_as_tokenized',
-    'nested_has_many_through',
-    File.basename(File.expand_path("#{RAILS_ROOT}/../..")),
-    'dry_validity_assertions'
-  ]
+  config.plugin_paths << '..'
+  config.plugins = %w(plugins_plus state_machine has_messages validates_as_email_address has_emails)
   config.cache_classes = false
   config.whiny_nils = true
+  config.action_mailer.delivery_method = :test
 end
-
-Plugin.mix_code_from(:mailers => /.+_mailer/)

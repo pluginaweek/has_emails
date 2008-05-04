@@ -1,92 +1,65 @@
 require 'has_messages'
 require 'validates_as_email_address'
-require 'acts_as_tokenized'
-require 'nested_has_many_through'
+require 'has_emails/extensions/action_mailer'
 
 module PluginAWeek #:nodoc:
-  module Has #:nodoc:
-    # Adds support for sending emails to models
-    module Emails
-      def self.included(base) #:nodoc:
-        base.extend(MacroMethods)
+  # Adds a generic implementation for sending emails
+  module HasEmails
+    def self.included(base) #:nodoc:
+      base.class_eval do
+        extend PluginAWeek::HasEmails::MacroMethods
+      end
+    end
+    
+    module MacroMethods
+      # Creates the following email associations:
+      # * +emails+ - Emails that were composed and are visible to the owner.  Emails may have been sent or unsent.
+      # * +received_emails - Emails that have been received from others and are visible.  Emails may have been read or unread.
+      # 
+      # == Creating new emails
+      # 
+      # To create a new email, the +emails+ association should be used, for example:
+      # 
+      #   address = EmailAddress.find(123)
+      #   email = user.emails.build
+      #   email.subject = 'Hello'
+      #   email.body = 'How are you?'
+      #   email.to User.EmailAddress(456)
+      #   email.save!
+      #   email.deliver!
+      # 
+      # Alternatively, 
+      def has_emails
+        has_many  :emails,
+                    :as => :sender,
+                    :class_name => 'Email',
+                    :conditions => {:hidden_at => nil},
+                    :order => 'messages.created_at ASC'
+        has_many  :received_emails,
+                    :as => :receiver,
+                    :class_name => 'MessageRecipient',
+                    :include => :message,
+                    :conditions => ['message_recipients.hidden_at IS NULL AND messages.state = ?', 'sent'],
+                    :order => 'messages.created_at ASC'
+        
+        include PluginAWeek::HasEmails::InstanceMethods
+      end
+    end
+    
+    module InstanceMethods
+      # Composed emails that have not yet been sent
+      def unsent_emails
+        emails.with_state('unsent')
       end
       
-      module MacroMethods
-        # Adds support for emailing instances of this model through multiple
-        # email addresses.
-        # 
-        # == Generated associations
-        # 
-        # The following +has_many+ associations are created for models that support
-        # emailing:
-        # * +email_addresses+ - The email addresses of this model
-        # * +emails+ - A collection of Emails of which this model was the sender
-        # * +email_recipients+ - A collection of EmailRecipients in which this record is a receiver
-        def has_email_addresses
-          has_many  :email_addresses,
-                      :class_name => 'EmailAddress',
-                      :as => :emailable,
-                      :dependent => :destroy
-          
-          # Add associations for all emails the model has sent and received
-          has_many  :emails,
-                      :through => :email_addresses
-          has_many  :email_recipients,
-                      :through => :email_addresses
-          
-          include PluginAWeek::Has::Emails::InstanceMethods
-        end
-        
-        # Adds support for emailing instances of this model through a single
-        # email address.
-        # 
-        # == Generated associations
-        # 
-        # The following associations are created for models that support emailing:
-        # * +email_address+ - The email address of this model
-        # * +emails+ - A collection of Emails of which this model was the sender
-        # * +email_recipients+ - A collection of EmailRecipients in which this record is a receiver
-        def has_email_address
-          has_one :email_address,
-                    :class_name => 'EmailAddress',
-                    :as => :emailable,
-                    :dependent => :destroy
-          
-          delegate  :emails,
-                    :email_recipients,
-                      :to => :email_address
-          
-          include PluginAWeek::Has::Emails::InstanceMethods
-        end
-      end
-      
-      module InstanceMethods
-        # All emails this model has received
-        def received_emails
-          email_recipients.active.find_in_states(:all, :unread, :read, :include => :message, :conditions => ['messages.state_id = ?', Message.states.find_by_name('sent').id]).collect do |recipient|
-            ReceivedMessage.new(recipient)
-          end
-        end
-        
-        # All emails that have not yet been sent by this model (excluding any that have been deleted)
-        def unsent_emails(*args)
-          emails.active.unsent(*args)
-        end
-        
-        # All emails that have been sent by this model (excluding any that have been deleted)
-        def sent_emails(*args)
-          emails.active.find_in_states(:all, :queued, :sent, *args)
-        end
-        
-        # Contains all of the emails that have been sent and received
-        def email_box
-          @email_box ||= MessageBox.new(received_emails, unsent_emails, sent_emails)
-        end
+      # Composed emails that have already been sent
+      def sent_emails
+        emails.with_states(%w(queued sent))
       end
     end
   end
 end
 
 ActiveRecord::Base.class_eval do
-  include PluginAWeek::Has::Emails
+  include PluginAWeek::HasEmails
 end

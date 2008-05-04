@@ -1,5 +1,13 @@
 *SVN*
 
+*0.1.0* (May 5th, 2008)
+
+* Update to latest has_messages api
+
+* Simplify by removing support for models other than EmailAddresses in Emails
+
+* Updated documentation
+
 *0.0.1* (September 26th, 2007)
 
 * Refactor has_email_address/has_email_addresses so that new associations for unsent/sent emails isn't created for has_email_address

@@ -1,200 +1,148 @@
-require File.dirname(__FILE__) + '/../test_helper'
+require File.expand_path(File.dirname(__FILE__) + '/../test_helper')
+
+class EmailAddressByDefaultTest < Test::Unit::TestCase
+  def setup
+    @email_address = EmailAddress.new
+  end
+  
+  def test_should_not_have_a_name
+    assert @email_address.name.blank?
+  end
+  
+  def test_should_not_have_a_spec
+    assert @email_address.name.blank?
+  end
+end
 
 class EmailAddressTest < Test::Unit::TestCase
-  fixtures :departments, :users, :email_addresses, :messages, :message_recipients, :state_changes
-  
-  def test_should_convert_email_address_using_same_model
-    e = email_addresses(:bob)
-    assert_same e, EmailAddress.convert_from(e)
+  def test_should_be_valid_with_a_set_of_valid_attributes
+    email_address = new_email_address
+    assert email_address.valid?
   end
   
-  def test_should_convert_string
-    e = EmailAddress.convert_from('test@email.com')
-    assert_instance_of EmailAddress, e
-    assert_equal 'test@email.com', e.spec
+  def test_should_require_a_spec
+    email_address = new_email_address(:spec => nil)
+    assert !email_address.valid?
+    assert_equal 3, Array(email_address.errors.on(:spec)).size
   end
   
-  def test_should_convert_record_with_email_address_column
-    department = departments(:marketing)
-    e = EmailAddress.convert_from(department)
-    assert_instance_of EmailAddress, e
-    assert_equal 'marketing@companyxyz.com', e.spec
+  def test_should_require_a_properly_formatted_email
+    email_address = new_email_address(:spec => '!@@!@@!')
+    assert !email_address.valid?
+    assert_equal 1, Array(email_address.errors.on(:spec)).size
   end
   
-  def test_should_convert_record_with_email_address_association
-    user = users(:bob)
-    class << user
-      def email_address
-        EmailAddress.new(:spec => 'test@email.com')
-      end
-    end
+  def test_should_not_allow_emails_less_than_3_characters
+    email_address = new_email_address(:spec => 'aa')
+    assert !email_address.valid?
+    assert_equal 2, Array(email_address.errors.on(:spec)).size
     
-    e = EmailAddress.convert_from(user)
-    assert_instance_of EmailAddress, e
-    assert_equal 'test@email.com', e.spec
+    email_address.spec = 'a@a'
+    assert email_address.valid?
   end
   
-  def test_should_convert_record_with_email_addresses_association_using_first_email_address
-    e = EmailAddress.convert_from(users(:bob))
-    assert_instance_of EmailAddress, e
-    assert_equal 'bob@bob.com', e.spec
+  def test_should_not_allow_emails_longer_than_320_characters
+    email_address = new_email_address(:spec => 'a' * 314 + '@a.com')
+    assert email_address.valid?
+    
+    email_address.spec += 'a'
+    assert !email_address.valid?
+    assert_equal 1, Array(email_address.errors.on(:spec)).size
   end
   
-  def test_should_raise_exception_if_converting_unknown_class_to_email_address
-    assert_raise(ArgumentError) {EmailAddress.convert_from(1)}
+  def test_should_require_a_unique_spec_scoped_by_name
+    email_address = create_email_address(:spec => 'john.smith@gmail.com', :name => 'John Smith')
+    
+    second_email_address = new_email_address(:spec => 'john.smith@gmail.com', :name => 'John Smith II')
+    assert second_email_address.valid?
+    
+    second_email_address = new_email_address(:spec => 'john.smith@gmail.com', :name => 'John Smith')
+    assert !second_email_address.valid?
+    assert_equal 1, Array(second_email_address.errors.on(:spec)).size
   end
   
-  def test_invalid_spec_should_not_be_valid
-    assert !EmailAddress.valid?('invalid')
+  def test_should_not_require_a_name
+    email_address = new_email_address(:name => nil)
+    assert email_address.valid?
   end
-  
-  def test_valid_spec_should_be_valid
-    assert EmailAddress.valid?('valid@valid.com')
+end
+
+class EmailAddressFromAddressTest < Test::Unit::TestCase
+  def setup
+    @email_address = EmailAddress.new(:address => 'John Smith <john.smith@gmail.com>')
   end
   
   def test_should_be_valid
-    assert_valid email_addresses(:bob)
+    assert @email_address.valid?
   end
   
-  def test_should_require_spec
-    assert_invalid email_addresses(:bob), :spec, nil
+  def test_should_find_a_name
+    assert_equal 'John Smith', @email_address.name
   end
   
-  def test_should_require_unique_spec
-    assert_invalid email_addresses(:bob).clone, :spec
+  def test_should_find_a_spec
+    assert_equal 'john.smith@gmail.com', @email_address.spec
+  end
+end
+
+class EmailAddressFromAddressWithoutNameTest < Test::Unit::TestCase
+  def setup
+    @email_address = EmailAddress.new(:address => 'john.smith@gmail.com')
   end
   
-  def test_should_require_minimum_length_for_spec
-    assert_invalid email_addresses(:bob), :spec, 'ab'
-    assert_valid email_addresses(:bob), :spec, 'a@a'
+  def test_should_be_valid
+    assert @email_address.valid?
   end
   
-  def test_should_require_maximum_length_for_spec
-    assert_invalid email_addresses(:bob), :spec, 'a' * 300 + '@' + 'a' * 20
-    assert_valid email_addresses(:bob), :spec, 'a' * 300 + '@' + 'a' * 19
+  def test_should_not_find_a_name
+    assert @email_address.name.blank?
   end
   
-  def test_should_require_specific_format_for_spec
-    assert_invalid email_addresses(:bob), :spec, 'aaaaaaaaaa'
-    assert_valid email_addresses(:bob), :spec, 'aaa@aaa.com'
+  def test_should_find_a_spec
+    assert_equal 'john.smith@gmail.com', @email_address.spec
+  end
+end
+
+class EmailAddressAfterBeingCreatedTest < Test::Unit::TestCase
+  def setup
+    @email_address = create_email_address(:name => 'John Smith', :spec => 'john.smith@gmail.com')
   end
   
-  def test_should_have_polymorphic_emailable_association
-    assert_equal users(:bob), email_addresses(:bob).emailable
+  def test_should_record_when_it_was_created
+    assert_not_nil @email_address.created_at
   end
   
-  def test_should_have_unsent_emails_association
-    assert_equal [messages(:unsent_from_bob)], email_addresses(:bob).unsent_emails
+  def test_should_record_when_it_was_updated
+    assert_not_nil @email_address.updated_at
   end
   
-  def test_should_have_sent_emails_association
-    assert_equal [messages(:sent_from_bob), messages(:queued_from_bob)], email_addresses(:bob).sent_emails
+  def test_should_generate_an_address_with_the_name
+    assert_equal 'John Smith <john.smith@gmail.com>', @email_address.with_name
+  end
+end
+
+class EmailAddressAsAClassTest < Test::Unit::TestCase
+  def test_should_be_able_to_split_address_containing_name
+    name, spec = EmailAddress.split_address('John Smith <john.smith@gmail.com>')
+    assert_equal 'John Smith', name
+    assert_equal 'john.smith@gmail.com', spec
   end
   
-  def test_should_have_received_emails_association
-    assert_equal [messages(:sent_from_bob), messages(:sent_from_mary)], email_addresses(:john).received_emails.map(&:email)
+  def test_should_be_able_to_split_address_not_containing_name
+    name, spec = EmailAddress.split_address('john.smith@gmail.com')
+    assert_nil name
+    assert_equal 'john.smith@gmail.com', spec
   end
   
-  def test_initial_state_should_be_unverified
-    assert_equal :unverified, EmailAddress.new.state.to_sym
+  def test_should_be_able_to_find_an_existing_email_by_address
+    email_address = create_email_address(:address => 'John Smith <john.smith@gmail.com>')
+    assert_equal email_address, EmailAddress.find_or_create_by_address('John Smith <john.smith@gmail.com>')
   end
   
-  def test_should_verify_if_unverified
-    e = email_addresses(:bob)
-    assert e.unverified?
-    assert e.verify!
-    assert e.verified?
-  end
-  
-  def test_should_not_verify_if_verified
-    e = email_addresses(:john)
-    assert e.verified?
-    assert !e.verify!
-  end
-  
-  def test_should_create_verification_code_on_create
-    e = EmailAddress.new(:spec => 'test@me.com', :emailable => users(:bob))
-    assert_nil e.verification_code
-    assert e.save!
-    assert_not_nil e.verification_code
-    assert_equal 32, e.verification_code.length
-  end
-  
-  def test_should_not_modify_verification_code_on_update
-    e = email_addresses(:bob)
-    original_verification_code = e.verification_code
-    e.spec = 'test@me.com'
-    assert e.save!
-    assert_equal original_verification_code, e.verification_code
-  end
-  
-  def test_should_create_code_expiry_on_create
-    e = EmailAddress.new(:spec => 'test@me.com', :emailable => users(:bob))
-    assert_nil e.code_expiry
-    assert e.save!
-    assert_not_nil e.code_expiry
-  end
-  
-  def test_should_not_modify_code_expiry_on_update
-    e = email_addresses(:bob)
-    original_code_expiry = e.code_expiry
-    e.spec = 'test@me.com'
-    assert e.save!
-    assert_equal original_code_expiry, e.code_expiry
-  end
-  
-  def test_should_not_automatically_parse_local_name_after_find
-    assert_nil email_addresses(:bob).send(:instance_variable_get, '@local_name')
-  end
-  
-  def test_should_not_automatically_parse_domain_after_find
-    assert_nil email_addresses(:bob).send(:instance_variable_get, '@domain')
-  end
-  
-  def test_should_parse_local_name_when_accessed
-    assert_equal 'bob', email_addresses(:bob).local_name
-  end
-  
-  def test_should_parse_domain_when_accessed
-    assert_equal 'bob.com', email_addresses(:bob).domain
-  end
-  
-  def test_should_reset_local_name_and_domain_when_new_spec_is_set
-    e = email_addresses(:bob)
-    assert_equal 'bob', e.local_name
-    assert_equal 'bob.com', e.domain
-    
-    e.spec = 'test@me.com'
-    assert_equal 'test', e.local_name
-    assert_equal 'me.com', e.domain
-  end
-  
-  def test_name_should_be_blank_by_default
-    assert_equal '', EmailAddress.new.name
-  end
-  
-  def test_should_set_name_from_attributes
-    assert_equal 'bob', EmailAddress.new(:name => 'bob').name
-  end
-  
-  def test_should_return_spec_for_with_name_when_name_is_blank
-    e = email_addresses(:bob)
-    assert_equal e.spec, e.with_name
-  end
-  
-  def test_should_return_name_and_spec_for_with_name_when_name_is_not_blank
-    e = email_addresses(:bob)
-    e.instance_eval do
-      def name
-        'Bob'
-      end
-    end
-    
-    assert_equal 'Bob <bob@bob.com>', e.with_name
-  end
-  
-  def test_should_use_spec_for_stringification
-    e = email_addresses(:bob)
-    assert_equal e.spec, e.to_s
+  def test_should_be_able_to_create_from_a_new_address
+    email_address = EmailAddress.find_or_create_by_address('John Smith <john.smith@gmail.com>')
+    assert !email_address.new_record?
+    assert_equal 'John Smith', email_address.name
+    assert_equal 'john.smith@gmail.com', email_address.spec
   end
 end

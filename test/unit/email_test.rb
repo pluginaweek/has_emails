@@ -1,89 +1,29 @@
-require File.dirname(__FILE__) + '/../test_helper'
+require File.expand_path(File.dirname(__FILE__) + '/../test_helper')
 
-class EmailTest < Test::Unit::TestCase
-  fixtures :users, :email_addresses, :messages, :message_recipients, :state_changes
-  
-  def test_should_be_valid
-    assert_valid messages(:sent_from_bob)
+class EmailAfterBeingDeliveredTest < Test::Unit::TestCase
+  def setup
+    ActionMailer::Base.deliveries = []
+    
+    @email = new_email(
+      :subject => 'Hello',
+      :body => 'How are you?',
+      :sender => create_email_address(:spec => 'webmaster@localhost'),
+      :to => create_email_address(:spec => 'partners@localhost'),
+      :cc => create_email_address(:spec => 'support@localhost'),
+      :bcc => create_email_address(:spec => 'feedback@localhost')
+    )
+    assert @email.deliver!
   end
   
-  def test_should_require_sender_spec
-    assert_invalid messages(:sent_from_bob), :sender_spec, nil
-  end
-  
-  def test_should_require_minimum_length_for_sender_spec
-    assert_invalid messages(:sent_from_bob), :sender_spec, 'ab'
-    assert_valid messages(:sent_from_bob), :sender_spec, 'a@a'
-  end
-  
-  def test_should_require_maximum_length_for_sender_spec
-    assert_invalid messages(:sent_from_bob), :sender_spec, 'a' * 300 + '@' + 'a' * 20
-    assert_valid messages(:sent_from_bob), :sender_spec, 'a' * 300 + '@' + 'a' * 19
-  end
-  
-  def test_should_require_specific_format_for_sender_spec
-    assert_invalid messages(:sent_from_bob), :sender_spec, 'aaaaaaaaaa'
-    assert_valid messages(:sent_from_bob), :sender_spec, 'aaa@aaa.com'
-  end
-  
-  def test_to_should_create_email_recipient
-    assert_instance_of EmailRecipient, messages(:sent_from_bob).to.build
-  end
-  
-  def test_cc_should_create_email_recipient
-    assert_instance_of EmailRecipient, messages(:sent_from_bob).cc.build
-  end
-  
-  def test_bcc_should_create_email_recipient
-    assert_instance_of EmailRecipient, messages(:sent_from_bob).bcc.build
-  end
-  
-  def test_sender_should_be_spec_if_arbitrary_email_address_used
-    assert_equal 'stranger@somewhere.com', messages(:unsent_from_stranger).sender
-  end
-  
-  def test_sender_should_be_model_if_known_email_address_used
-    assert_equal email_addresses(:bob), messages(:sent_from_bob).sender
-  end
-  
-  def test_should_set_sender_spec_if_sender_is_arbitrary_email_address
-    email = messages(:unsent_from_stranger)
-    email.sender = 'stranger@somewhereelse.com'
-    assert_equal 'stranger@somewhereelse.com', email.sender_spec
-    assert_nil email.sender_id
-    assert_nil email.sender_type
-  end
-  
-  def test_should_set_sender_and_sender_spec_if_sender_is_known_email_address
-    email = messages(:unsent_from_stranger)
-    email.sender_spec = nil
-    email.sender = email_addresses(:john)
-    assert_equal 2, email.sender_id
-    assert_equal 'EmailAddress', email.sender_type
-    assert_equal 'john@john.com', email.sender_spec
-  end
-  
-  def test_sender_email_address_should_convert_sender_spec_if_arbitrary_email_address_used
-    email_address = messages(:unsent_from_stranger).sender_email_address
-    assert_instance_of EmailAddress, email_address
-    assert_equal 'stranger@somewhere.com', email_address.spec
-  end
-  
-  def test_sender_email_address_should_use_sender_if_known_email_address_used
-    email_address = messages(:sent_from_bob).sender_email_address
-    assert_instance_of EmailAddress, email_address
-    assert_equal 'bob@bob.com', email_address.spec
-  end
-  
-  def test_reply_should_use_sender_spec_for_sender_if_arbitrary_email_address_used
-    message = messages(:unsent_from_stranger)
-    reply = message.reply
-    assert_equal 'stranger@somewhere.com', reply.sender
-  end
-  
-  def test_forward_should_use_sender_spec_for_sender_if_arbitrary_email_address_used
-    message = messages(:unsent_from_stranger)
-    forward = message.forward
-    assert_equal 'stranger@somewhere.com', forward.sender
+  def test_should_send_mail
+    assert ActionMailer::Base.deliveries.any?
+    
+    delivery = ActionMailer::Base.deliveries.first
+    assert_equal 'Hello', delivery.subject
+    assert_equal 'How are you?', delivery.body
+    assert_equal ['webmaster@localhost'], delivery.from
+    assert_equal ['partners@localhost'], delivery.to
+    assert_equal ['support@localhost'], delivery.cc
+    assert_equal ['feedback@localhost'], delivery.bcc
   end
 end

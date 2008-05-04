@@ -1,123 +1,45 @@
 # Represents a valid RFC822 email address
 class EmailAddress < ActiveRecord::Base
-  class << self
-    # Converts the specified record to an EmailAddress.  It will convert the
-    # following types:
-    # 1. String
-    # 2. A record with an +email_address+ String attribute
-    # 3. A record with an +email_address+ association
-    # 4. A record with an +email_addresses+ association (first record will be chosen)
-    # 
-    # If an EmailAddress is specified, the same model will be returned.  An
-    # ArgumentError is raised if it doesn't match any of the above criteria.
-    def convert_from(record)
-      if record
-        if EmailAddress === record
-          record
-        elsif String === record
-          EmailAddress.new(:spec => record)
-        elsif record.respond_to?(:email_address)
-          if record.email_address.is_a?(String)
-            address = EmailAddress.new(:spec => record.email_address)
-            address.name = record.name if record.respond_to?(:name)
-            address
-          else
-            record.email_address
-          end
-        elsif record.respond_to?(:email_addresses)
-          record.email_addresses.first
-        else
-          raise ArgumentError, "Cannot convert #{record.class} to an EmailAddress"
-        end
-      end
-    end
-    
-    # Determines if the given spec is a valid address using the RFC822 spec
-    def valid?(spec)
-      !RFC822::EmailAddress.match(spec).nil?
-    end
-  end
-  
-  acts_as_tokenized :token_field => 'verification_code', :token_length => 32
-  
-  # Support e-mail address verification
-  has_states    :initial => :unverified
-  
-  # Add messaging capabilities.  This will give us an email_box.
-  has_messages  :emails,
-                  :message_class => 'Email'
-  belongs_to    :emailable,
-                  :polymorphic => true
+  has_emails
   
   validates_presence_of       :spec
+  validates_as_email_address  :spec
+  validates_uniqueness_of     :spec,
+                                :scope => 'name'
   
-  with_options(:allow_nil => true) do |klass|
-    klass.validates_uniqueness_of     :spec
-    klass.validates_as_email_address  :spec
-  end
-  
-  # The name of the person who owns this email address
-  attr_accessor :name
-  
-  # Ensure that the e-mail address has a verification code that can be sent
-  # to the user
-  before_create :set_code_expiry
-  
-  state :unverified, :verified
-  
-  # Verifies that the email address is valid
-  event :verify do
-    transition_to :verified, :from => :unverified
-  end
-  
-  # Sets the full address
-  def spec=(new_spec)
-    @local_name = @domain = nil
-    write_attribute(:spec, new_spec)
-  end
-  
-  # The part of the e-mail address before the @
-  def local_name
-    parse_spec if !@local_name
-    @local_name
-  end
-  
-  # The part of the e-mail address after the @
-  def domain
-    parse_spec if !@domain
-    @domain
-  end
-  
-  # Gets the name of the person whose email address this is.  Default is an
-  # empty string.  Override this if you want it to appear in with_name
-  def name
-    @name || ''
-  end
-  
-  # Returns a string version of the email address plus any name like
-  # "John Doe <john.doe@gmail.com>".  In order to have a valid name within the
-  # string, you must override +name+.
-  def with_name
-    name.blank? ? to_s : "#{name} <#{to_s}>"
-  end
-  
-  # Returns the full email address (without the name)
-  def to_s #:nodoc
-    spec
-  end
-  
-  private
-  # Sets the time at which the verification code will expire
-  def set_code_expiry
-    self.code_expiry = 48.hour.from_now
-  end
-  
-  # Parses the current spec and sets +@local_name+ and +@domain+ based on the
-  # matching groups within the regular expression
-  def parse_spec
-    if !@local_name && !@domain && match = RFC822::EmailAddress.match(spec)
-      @local_name = match.captures[0]
-      @domain = match.captures[1]
+  class << self
+    # Finds or create an email address based on the given value
+    def find_or_create_by_address(address)
+      name, spec = split_address(address)
+      find_or_create_by_name_and_spec(name, spec)
     end
+    
+    # Splits the given address into a name and spec
+    def split_address(address)
+      if match = /^(\S.*)\s+<(.*)>$/.match(address)
+        name = match[1]
+        spec = match[2]
+      else
+        spec = address
+      end
+      
+      return name, spec
+    end
+  end
+  
+  # Sets the value to be used for this email address.  This can come in two formats:
+  # * With name - John Doe <john.doe@gmail.com>
+  # * Without name - john.doe@gmail.com
+  def address=(address)
+    self.name, self.spec = self.class.split_address(address)
+  end
+  
+  # Generates the value for the email address, including the name associated with
+  # it (if provided).  For example,
+  # 
+  #   e = EmailAddress.new(:name => 'John Doe', :spec => 'john.doe@gmail.com')
+  #   e.with_name # => "John Doe <john.doe@gmail.com>"
+  def with_name
+    name.blank? ? spec : "#{name} <#{spec}>"
   end
 end

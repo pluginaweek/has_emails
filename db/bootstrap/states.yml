@@ -1,9 +1,0 @@
-unverified:
-  id: 601
-  name: unverified
-  owner_type: EmailAddress
-  
-verified:
-  id: 602
-  name: verified
-  owner_type: EmailAddress

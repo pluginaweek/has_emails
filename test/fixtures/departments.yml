@@ -1,9 +1,0 @@
-marketing:
-  id: 1
-  name: Marketing
-  email_address: marketing@companyxyz.com
-  
-testing:
-  id: 2
-  name: Testing
-  email_address: testing@companyxyz.com
