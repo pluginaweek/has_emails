@@ -1,35 +1,24 @@
-*SVN*
+== master
 
-*0.1.1* (June 22nd, 2008)
+== 0.1.1 / 2008-06-22
 
 * Remove log files from gems
 
-*0.1.0* (May 5th, 2008)
+== 0.1.0 / 2008-05-05
 
 * Update to latest has_messages api
-
 * Simplify by removing support for models other than EmailAddresses in Emails
-
 * Updated documentation
 
-*0.0.1* (September 26th, 2007)
+== 0.0.1 / 2007-09-26
 
 * Refactor has_email_address/has_email_addresses so that new associations for unsent/sent emails isn't created for has_email_address
-
 * Add state changes fixtures for tests
-
 * Add tests for ApplicationMailer
-
 * Add support for tracking the original email address for senders/recipients even if the email address changes on the associated model (i.e. EmailAddress/User/etc.)
-
 * Support converting models with an email_address/email_addresses association
-
 * Allow the sender of emails to be an arbitrary string email address
-
 * Add documentation
-
 * Move test fixtures out of the test application root directory
-
 * Convert dos newlines to unix newlines
-
 * Update against latest changes to has_messages
