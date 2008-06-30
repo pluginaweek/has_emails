@@ -51,19 +51,19 @@ In addition to queueing emails, you can build them directly like so:
   email.to EmailAddress.find(456)
   email.subject = 'Hey!'
   email.body = 'Does anyone want to go out tonight?'
-  email.deliver!
+  email.deliver
 
 === Replying to emails
 
   reply = email.reply_to_all
   reply.body = "I'd love to go out!"
-  reply.deliver!
+  reply.deliver
 
 === Forwarding emails
 
   forward = email.forward
   forward.body = 'Interested?'
-  forward.deliver!
+  forward.deliver
 
 === Processing email asynchronously
 
@@ -76,7 +76,7 @@ To process queued emails, you need an external cron job that checks and sends
 them like so:
 
   Email.with_state('queued').each do |email|
-    email.deliver!
+    email.deliver
   end
 
 == Testing

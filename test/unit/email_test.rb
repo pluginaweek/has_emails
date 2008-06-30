@@ -12,7 +12,7 @@ class EmailAfterBeingDeliveredTest < Test::Unit::TestCase
       :cc => create_email_address(:spec => 'support@localhost'),
       :bcc => create_email_address(:spec => 'feedback@localhost')
     )
-    assert @email.deliver!
+    assert @email.deliver
   end
   
   def test_should_send_mail
