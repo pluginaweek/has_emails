@@ -1,4 +1,17 @@
-# Represents a valid RFC822 email address
+# Represents a valid RFC822 email address.  See http://www.w3.org/Protocols/rfc822/
+# for more information about the entire specification.
+# 
+# Email addresses are directly associated with emails and, therefore, should be
+# used for building and delivering new e-mails.
+# 
+# == Associations
+# 
+# Email addresses have the following associations defined as a result of using the
+# +has_emails+ macro:
+# * +emails+ - Emails that were composed and are visible to the owner.  Emails may have been sent or unsent.
+# * +received_emails+ - Emails that have been received from others and are visible.  Emails may have been read or unread.
+# * +unsent_emails+ - Emails that have not yet been delivered
+# * +sent_emails+ - Emails that have already been delivered
 class EmailAddress < ActiveRecord::Base
   has_emails
   
@@ -14,7 +27,10 @@ class EmailAddress < ActiveRecord::Base
       find_or_create_by_name_and_spec(name, spec)
     end
     
-    # Splits the given address into a name and spec
+    # Splits the given address into a name and spec. For example,
+    # 
+    #   EmailAddress.split_address("John Smith <john.smith@gmail.com")  # => ["John Smith", "john.smith@gmail.com"]
+    #   EmailAddress.split_address("john.smith@gmail.com")              # => [nil, "john.smith@gmail.com"]
     def split_address(address)
       if match = /^(\S.*)\s+<(.*)>$/.match(address)
         name = match[1]

@@ -24,11 +24,9 @@ module PluginAWeek #:nodoc:
       #   email = user.emails.build
       #   email.subject = 'Hello'
       #   email.body = 'How are you?'
-      #   email.to User.EmailAddress(456)
+      #   email.to EmailAddress.find(456)
       #   email.save!
       #   email.deliver!
-      # 
-      # Alternatively, 
       def has_emails
         has_many  :emails,
                     :as => :sender,
@@ -47,12 +45,14 @@ module PluginAWeek #:nodoc:
     end
     
     module InstanceMethods
-      # Composed emails that have not yet been sent
+      # Composed emails that have not yet been sent.  These consists of all
+      # emails that are currently in the "unsent" state.
       def unsent_emails
         emails.with_state('unsent')
       end
       
-      # Composed emails that have already been sent
+      # Composed emails that have already been sent.  These consist of all emails
+      # that are currently in the "queued" or "sent states.
       def sent_emails
         emails.with_states(%w(queued sent))
       end

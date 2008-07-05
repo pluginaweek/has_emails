@@ -1,7 +1,21 @@
 module PluginAWeek #:nodoc:
   module HasEmails
     module Extensions #:nodoc:
+      # Adds support for queueing emails so that they can be procssed in the
+      # background.  Emails are stored in the database using the Email ActiveRecord
+      # model.
       # 
+      # == Queueing mail
+      # 
+      # Once a mailer action and template are defined, you can queue your message
+      # for background processing like so:
+      # 
+      #   Notifier.queue_signup_notification(john_smith) # Queues the email
+      # 
+      # If you were to deliver the mail immediately, the normal process would be
+      # used like so:
+      # 
+      #   Notifier.deliver_signup_notification(john_smith) # Delivers the email
       module ActionMailer
         def self.included(base) #:nodoc:
           base.class_eval do
@@ -9,7 +23,7 @@ module PluginAWeek #:nodoc:
             cattr_accessor :default_subject_prefix
             
             # Specify the prefix to use for the subject. This defaults to the
-            # +default_subject_prefix+ specified for ApplicationMailer.
+            # +default_subject_prefix+ specified for ActionMailer::Base.
             adv_attr_accessor :subject_prefix
             
             include PluginAWeek::HasEmails::Extensions::ActionMailer::InstanceMethods
