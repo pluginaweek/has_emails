@@ -91,6 +91,6 @@ To run against a specific version of Rails:
 == Dependencies
 
 * Rails 2.1 or later
-* plugins_plus[http://github.com/pluginaweek/plugins_plus]
 * has_messages[http://github.com/pluginaweek/has_messages]
 * state_machine[http://github.com/pluginaweek/state_machine]
+* plugins_plus[http://github.com/pluginaweek/plugins_plugins] (optional if app files are copied to your project tree)
