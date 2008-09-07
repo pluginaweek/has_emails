@@ -13,7 +13,7 @@ spec = Gem::Specification.new do |s|
   s.require_path      = 'lib'
   s.has_rdoc          = true
   s.test_files        = Dir['test/**/*_test.rb']
-  s.add_dependency    'has_messages', '>= 0.1.2'
+  s.add_dependency    'has_messages', '>= 0.1.3'
   s.add_dependency    'validates_as_email_address', '>= 0.0.2'
   
   s.author            = 'Aaron Pfeifer'
