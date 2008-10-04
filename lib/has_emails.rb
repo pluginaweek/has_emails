@@ -5,12 +5,6 @@ require 'has_emails/extensions/action_mailer'
 module PluginAWeek #:nodoc:
   # Adds a generic implementation for sending emails
   module HasEmails
-    def self.included(base) #:nodoc:
-      base.class_eval do
-        extend PluginAWeek::HasEmails::MacroMethods
-      end
-    end
-    
     module MacroMethods
       # Creates the following email associations:
       # * +emails+ - Emails that were composed and are visible to the owner.  Emails may have been sent or unsent.
@@ -61,5 +55,5 @@ module PluginAWeek #:nodoc:
 end
 
 ActiveRecord::Base.class_eval do
-  include PluginAWeek::HasEmails
+  extend PluginAWeek::HasEmails::MacroMethods
 end
