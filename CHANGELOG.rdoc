@@ -1,5 +1,8 @@
 == master
 
+== 0.1.4 / 2008-10-26
+
+* Add compatibility with has_messages 0.2.0
 * Change how the base module is included to prevent namespacing conflicts
 
 == 0.1.3 / 2008-09-07
