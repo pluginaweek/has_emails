@@ -22,7 +22,7 @@ class EmailAddressByDefaultFunctionalTest < Test::Unit::TestCase
   end
 end
 
-class EmailAddresFunctionalsTest < Test::Unit::TestCase
+class EmailAddressFunctionalTest < Test::Unit::TestCase
   def setup
     @email_address = create_email_address
   end

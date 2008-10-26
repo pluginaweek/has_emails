@@ -91,8 +91,7 @@ module PluginAWeek #:nodoc:
           def queue
             Email.transaction do
               # Create the main email
-              email = Email.new(
-                :sender => EmailAddress.find_or_create_by_address(from),
+              email = EmailAddress.find_or_create_by_address(from).emails.build(
                 :subject => subject,
                 :body => body,
                 :to => email_addresses_for(:recipients),

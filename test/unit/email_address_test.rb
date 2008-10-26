@@ -65,6 +65,18 @@ class EmailAddressTest < Test::Unit::TestCase
     email_address = new_email_address(:name => nil)
     assert email_address.valid?
   end
+  
+  def test_should_protect_attributes_from_mass_assignment
+    email_address = EmailAddress.new(
+      :id => 1,
+      :name => 'John Smith',
+      :spec => 'john.smith@gmail.com'
+    )
+    
+    assert_nil email_address.id
+    assert_equal 'John Smith', email_address.name
+    assert_equal 'john.smith@gmail.com', email_address.spec
+  end
 end
 
 class EmailAddressFromAddressTest < Test::Unit::TestCase
