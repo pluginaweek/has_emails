@@ -23,19 +23,19 @@ class EmailAddressTest < Test::Unit::TestCase
   def test_should_require_a_spec
     email_address = new_email_address(:spec => nil)
     assert !email_address.valid?
-    assert_equal 3, Array(email_address.errors.on(:spec)).size
+    assert email_address.errors.invalid?(:spec)
   end
   
   def test_should_require_a_properly_formatted_email
     email_address = new_email_address(:spec => '!@@!@@!')
     assert !email_address.valid?
-    assert_equal 1, Array(email_address.errors.on(:spec)).size
+    assert email_address.errors.invalid?(:spec)
   end
   
   def test_should_not_allow_emails_less_than_3_characters
     email_address = new_email_address(:spec => 'aa')
     assert !email_address.valid?
-    assert_equal 2, Array(email_address.errors.on(:spec)).size
+    assert email_address.errors.invalid?(:spec)
     
     email_address.spec = 'a@a'
     assert email_address.valid?
@@ -47,7 +47,7 @@ class EmailAddressTest < Test::Unit::TestCase
     
     email_address.spec += 'a'
     assert !email_address.valid?
-    assert_equal 1, Array(email_address.errors.on(:spec)).size
+    assert email_address.errors.invalid?(:spec)
   end
   
   def test_should_require_a_unique_spec_scoped_by_name
@@ -58,7 +58,7 @@ class EmailAddressTest < Test::Unit::TestCase
     
     second_email_address = new_email_address(:spec => 'john.smith@gmail.com', :name => 'John Smith')
     assert !second_email_address.valid?
-    assert_equal 1, Array(second_email_address.errors.on(:spec)).size
+    assert second_email_address.errors.invalid?(:spec)
   end
   
   def test_should_not_require_a_name

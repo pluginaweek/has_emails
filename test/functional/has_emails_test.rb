@@ -105,18 +105,18 @@ class EmailAddressWithHiddenEmailsTest < Test::Unit::TestCase
     @friend = create_email_address(:spec => 'jane.smith@gmail.com')
     
     hidden_unsent_email = create_email(:sender => @email_address)
-    hidden_unsent_email.hide!
+    hidden_unsent_email.hide
     @unsent_email = create_email(:sender => @email_address)
     
     hidden_sent_email = create_email(:sender => @email_address, :to => @friend)
     hidden_sent_email.deliver
-    hidden_sent_email.hide!
+    hidden_sent_email.hide
     @sent_email = create_email(:sender => @email_address, :to => @friend)
     @sent_email.deliver
     
     hidden_received_email = create_email(:sender => @friend, :to => @email_address)
     hidden_received_email.deliver
-    hidden_received_email.recipients.first.hide!
+    hidden_received_email.recipients.first.hide
     @received_email = create_email(:sender => @friend, :to => @email_address)
     @received_email.deliver
   end
