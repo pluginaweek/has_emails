@@ -3,7 +3,7 @@
 # delivered.
 class Email < Message
   state_machine :state do
-    after_transition :on => 'deliver', :do => :deliver_email
+    after_transition :on => :deliver, :do => :deliver_email
   end
   
   private

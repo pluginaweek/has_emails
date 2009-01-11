@@ -41,13 +41,13 @@ module HasEmails
     # Composed emails that have not yet been sent.  These consists of all
     # emails that are currently in the "unsent" state.
     def unsent_emails
-      emails.with_state('unsent')
+      emails.with_state(:unsent)
     end
     
     # Composed emails that have already been sent.  These consist of all emails
     # that are currently in the "queued" or "sent states.
     def sent_emails
-      emails.with_states(%w(queued sent))
+      emails.with_states(:queued, :sent)
     end
   end
 end
