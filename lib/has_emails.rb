@@ -6,8 +6,10 @@ require 'has_emails/extensions/action_mailer'
 module HasEmails
   module MacroMethods
     # Creates the following email associations:
-    # * +emails+ - Emails that were composed and are visible to the owner.  Emails may have been sent or unsent.
-    # * +received_emails - Emails that have been received from others and are visible.  Emails may have been read or unread.
+    # * +emails+ - Emails that were composed and are visible to the owner.
+    #   Emails may have been sent or unsent.
+    # * +received_emails - Emails that have been received from others and are
+    #   visible.  Emails may have been read or unread.
     # 
     # == Creating new emails
     # 

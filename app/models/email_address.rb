@@ -6,10 +6,12 @@
 # 
 # == Associations
 # 
-# Email addresses have the following associations defined as a result of using the
-# +has_emails+ macro:
-# * +emails+ - Emails that were composed and are visible to the owner.  Emails may have been sent or unsent.
-# * +received_emails+ - Emails that have been received from others and are visible.  Emails may have been read or unread.
+# Email addresses have the following associations defined as a result of using
+# the +has_emails+ macro:
+# * +emails+ - Emails that were composed and are visible to the owner.  Emails
+#   may have been sent or unsent.
+# * +received_emails+ - Emails that have been received from others and are
+#   visible.  Emails may have been read or unread.
 # * +unsent_emails+ - Emails that have not yet been delivered
 # * +sent_emails+ - Emails that have already been delivered
 class EmailAddress < ActiveRecord::Base
