@@ -17,10 +17,9 @@
 class EmailAddress < ActiveRecord::Base
   has_emails
   
-  validates_presence_of       :spec
-  validates_as_email_address  :spec
-  validates_uniqueness_of     :spec,
-                                :scope => 'name'
+  validates_presence_of :spec
+  validates_as_email_address :spec
+  validates_uniqueness_of :spec, :scope => 'name'
   
   class << self
     # Finds or create an email address based on the given value

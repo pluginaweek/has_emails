@@ -23,16 +23,17 @@ Source
 
 == Description
 
-Emailing between users and other parts of a system is a fairly common feature in
-web applications, especially for those that support social networking.  Emailing
-doesn't necessarily need to be between users, but can also act as a way for the
-web application to send notices and other notifications to users.
+Emailing between users and other parts of a system is a fairly common feature
+in web applications, especially for those that support social networking.
+Emailing doesn't necessarily need to be between users, but can also act as a
+way for the web application to send notices and other notifications to users.
 
 Rails already provides ActionMailer as a way of sending emails.  However, the
-framework does not provide an easy way to persist emails, track their status, and
-process them asynchronously.  Designing and building a framework that supports this
-can be complex and takes away from the business focus.  This plugin can help ease
-that process by demonstrating a complete implementation of these features.
+framework does not provide an easy way to persist emails, track their status,
+and process them asynchronously.  Designing and building a framework that
+supports this can be complex and takes away from the business focus.  This
+plugin can help ease that process by demonstrating a reference implementation
+of these features.
 
 == Usage
 
@@ -90,7 +91,6 @@ To run against a specific version of Rails:
 
 == Dependencies
 
-* Rails 2.1 or later
+* Rails 2.3 or later
 * has_messages[http://github.com/pluginaweek/has_messages]
 * state_machine[http://github.com/pluginaweek/state_machine]
-* plugins_plus[http://github.com/pluginaweek/plugins_plugins] (optional if app files are copied to your project tree)

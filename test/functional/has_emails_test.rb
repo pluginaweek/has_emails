@@ -1,6 +1,6 @@
 require File.expand_path(File.dirname(__FILE__) + '/../test_helper')
 
-class EmailAddressByDefaultFunctionalTest < Test::Unit::TestCase
+class EmailAddressByDefaultFunctionalTest < ActiveSupport::TestCase
   def setup
     @email_address = create_email_address
   end
@@ -22,7 +22,7 @@ class EmailAddressByDefaultFunctionalTest < Test::Unit::TestCase
   end
 end
 
-class EmailAddressFunctionalTest < Test::Unit::TestCase
+class EmailAddressFunctionalTest < ActiveSupport::TestCase
   def setup
     @email_address = create_email_address
   end
@@ -40,7 +40,7 @@ class EmailAddressFunctionalTest < Test::Unit::TestCase
   end
 end
 
-class EmailAddressWithUnsentEmails < Test::Unit::TestCase
+class EmailAddressWithUnsentEmails < ActiveSupport::TestCase
   def setup
     @email_address = create_email_address
     @sent_email = create_email(:sender => @email_address, :to => create_email_address(:spec => 'jane.smith@gmail.com'))
@@ -58,7 +58,7 @@ class EmailAddressWithUnsentEmails < Test::Unit::TestCase
   end
 end
 
-class EmailAddressWithSentEmails < Test::Unit::TestCase
+class EmailAddressWithSentEmails < ActiveSupport::TestCase
   def setup
     @email_address = create_email_address
     @to = create_email_address(:spec => 'jane.smith@gmail.com')
@@ -80,7 +80,7 @@ class EmailAddressWithSentEmails < Test::Unit::TestCase
   end
 end
 
-class EmailAddressWithReceivedEmails < Test::Unit::TestCase
+class EmailAddressWithReceivedEmails < ActiveSupport::TestCase
   def setup
     @sender = create_email_address
     @email_address = create_email_address(:spec => 'jane.smith@gmail.com')
@@ -99,7 +99,7 @@ class EmailAddressWithReceivedEmails < Test::Unit::TestCase
   end
 end
 
-class EmailAddressWithHiddenEmailsTest < Test::Unit::TestCase
+class EmailAddressWithHiddenEmailsTest < ActiveSupport::TestCase
   def setup
     @email_address = create_email_address
     @friend = create_email_address(:spec => 'jane.smith@gmail.com')

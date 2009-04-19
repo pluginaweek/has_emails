@@ -1,21 +1,17 @@
 require File.expand_path(File.dirname(__FILE__) + '/../test_helper')
 
-class ActionMailerTest < Test::Unit::TestCase
-  class TestMailer < ActionMailer::Base
-    def signed_up(recipient)
-      subject    'Thanks for signing up'
-      from       'MyWebApp <welcome@mywebapp.com>'
-      recipients recipient
-      cc         'Nobody <nobody@mywebapp.com>'
-      bcc        'root@mywebapp.com'
-      body       'Congratulations!'
-    end
+class TestMailer < ActionMailer::Base
+  def signed_up(recipient)
+    subject    'Thanks for signing up'
+    from       'MyWebApp <welcome@mywebapp.com>'
+    recipients recipient
+    cc         'Nobody <nobody@mywebapp.com>'
+    bcc        'root@mywebapp.com'
+    body       'Congratulations!'
   end
-  
-  def setup
-    ActionMailer::Base.deliveries = []
-  end
-  
+end
+
+class TestMailerTest < ActionMailer::TestCase
   def test_should_use_camelized_application_name_for_default_subject_prefix
     assert_equal '[AppRoot] ', ActionMailer::Base.default_subject_prefix
   end

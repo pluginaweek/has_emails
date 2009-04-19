@@ -13,7 +13,8 @@ module HasEmails
     # 
     # == Creating new emails
     # 
-    # To create a new email, the +emails+ association should be used, for example:
+    # To create a new email, the +emails+ association should be used.  For
+    # example:
     # 
     #   address = EmailAddress.find(123)
     #   email = user.emails.build

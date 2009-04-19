@@ -1,6 +1,6 @@
 require File.expand_path(File.dirname(__FILE__) + '/../test_helper')
 
-class EmailAddressByDefaultTest < Test::Unit::TestCase
+class EmailAddressByDefaultTest < ActiveSupport::TestCase
   def setup
     @email_address = EmailAddress.new
   end
@@ -14,7 +14,7 @@ class EmailAddressByDefaultTest < Test::Unit::TestCase
   end
 end
 
-class EmailAddressTest < Test::Unit::TestCase
+class EmailAddressTest < ActiveSupport::TestCase
   def test_should_be_valid_with_a_set_of_valid_attributes
     email_address = new_email_address
     assert email_address.valid?
@@ -79,7 +79,7 @@ class EmailAddressTest < Test::Unit::TestCase
   end
 end
 
-class EmailAddressFromAddressTest < Test::Unit::TestCase
+class EmailAddressFromAddressTest < ActiveSupport::TestCase
   def setup
     @email_address = EmailAddress.new(:address => 'John Smith <john.smith@gmail.com>')
   end
@@ -97,7 +97,7 @@ class EmailAddressFromAddressTest < Test::Unit::TestCase
   end
 end
 
-class EmailAddressFromAddressWithoutNameTest < Test::Unit::TestCase
+class EmailAddressFromAddressWithoutNameTest < ActiveSupport::TestCase
   def setup
     @email_address = EmailAddress.new(:address => 'john.smith@gmail.com')
   end
@@ -115,7 +115,7 @@ class EmailAddressFromAddressWithoutNameTest < Test::Unit::TestCase
   end
 end
 
-class EmailAddressAfterBeingCreatedTest < Test::Unit::TestCase
+class EmailAddressAfterBeingCreatedTest < ActiveSupport::TestCase
   def setup
     @email_address = create_email_address(:name => 'John Smith', :spec => 'john.smith@gmail.com')
   end
@@ -133,7 +133,7 @@ class EmailAddressAfterBeingCreatedTest < Test::Unit::TestCase
   end
 end
 
-class EmailAddressAsAClassTest < Test::Unit::TestCase
+class EmailAddressAsAClassTest < ActiveSupport::TestCase
   def test_should_be_able_to_split_address_containing_name
     name, spec = EmailAddress.split_address('John Smith <john.smith@gmail.com>')
     assert_equal 'John Smith', name
