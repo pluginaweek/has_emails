@@ -5,7 +5,7 @@ require 'rake/contrib/sshpublisher'
 
 spec = Gem::Specification.new do |s|
   s.name              = 'has_emails'
-  s.version           = '0.2.1'
+  s.version           = '0.3.0'
   s.platform          = Gem::Platform::RUBY
   s.summary           = 'Demonstrates a reference implementation for sending emails with logging and asynchronous support.'
   
