@@ -50,11 +50,11 @@ class EmailAddressWithUnsentEmails < ActiveSupport::TestCase
   end
   
   def test_should_have_unsent_emails
-    assert_equal [@first_draft, @second_draft], @email_address.unsent_emails
+    assert_equal [@second_draft, @first_draft], @email_address.unsent_emails
   end
   
   def test_should_include_unsent_emails_in_emails
-    assert_equal [@sent_email, @first_draft, @second_draft], @email_address.emails
+    assert_equal [@second_draft, @first_draft, @sent_email], @email_address.emails
   end
 end
 
@@ -72,11 +72,11 @@ class EmailAddressWithSentEmails < ActiveSupport::TestCase
   end
   
   def test_should_have_sent_emails
-    assert_equal [@first_sent_email, @second_sent_email], @email_address.sent_emails
+    assert_equal [@second_sent_email, @first_sent_email], @email_address.sent_emails
   end
   
   def test_should_include_sent_emails_in_emails
-    assert_equal [@draft, @first_sent_email, @second_sent_email], @email_address.emails
+    assert_equal [@second_sent_email, @first_sent_email, @draft], @email_address.emails
   end
 end
 
@@ -95,7 +95,7 @@ class EmailAddressWithReceivedEmails < ActiveSupport::TestCase
   end
   
   def test_should_have_received_emails
-    assert_equal [@first_sent_email, @second_sent_email], @email_address.received_emails.map(&:message)
+    assert_equal [@second_sent_email, @first_sent_email], @email_address.received_emails.map(&:message)
   end
 end
 
@@ -122,7 +122,7 @@ class EmailAddressWithHiddenEmailsTest < ActiveSupport::TestCase
   end
   
   def test_should_not_include_hidden_emails_in_emails
-    assert_equal [@unsent_email, @sent_email], @email_address.emails
+    assert_equal [@sent_email, @unsent_email], @email_address.emails
   end
   
   def test_should_not_include_hidden_emails_in_unsent_emails

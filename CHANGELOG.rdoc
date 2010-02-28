@@ -1,5 +1,7 @@
 == master
 
+* By default, sort emails newest first
+
 == 0.3.0 / 2009-04-19
 
 * Add compatibility with has_messages 0.4.0 / Rails 2.3

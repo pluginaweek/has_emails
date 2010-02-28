@@ -28,13 +28,13 @@ module HasEmails
                   :as => :sender,
                   :class_name => 'Email',
                   :conditions => {:hidden_at => nil},
-                  :order => 'messages.created_at ASC'
+                  :order => 'messages.created_at DESC'
       has_many  :received_emails,
                   :as => :receiver,
                   :class_name => 'MessageRecipient',
                   :include => :message,
                   :conditions => ['message_recipients.hidden_at IS NULL AND messages.state = ?', 'sent'],
-                  :order => 'messages.created_at ASC'
+                  :order => 'messages.created_at DESC'
       
       include HasEmails::InstanceMethods
     end
