@@ -1,5 +1,6 @@
 == master
 
+* Add a generator for db migration
 * Release gems via rake-gemcutter instead of rubyforge
 * By default, sort emails newest first
 

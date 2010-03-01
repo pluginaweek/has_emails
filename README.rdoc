@@ -37,6 +37,17 @@ of these features.
 
 == Usage
 
+=== Installation
+
++has_emails+ requires an additional database table to work.  You can generate
+a migration for this tables like so:
+
+  script/generate has_emails
+
+Then simply migrate your database:
+
+  rake db:migrate
+
 === Creating new emails
 
 Emails should usually still be created using ActionMailer.  However, instead of
