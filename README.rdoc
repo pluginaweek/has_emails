@@ -11,7 +11,7 @@ API
 
 Bugs
 
-* http://pluginaweek.lighthouseapp.com/projects/13272-has_emails
+* http://github.com/pluginaweek/has_emails/issues
 
 Development
 
