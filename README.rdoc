@@ -21,6 +21,10 @@ Source
 
 * git://github.com/pluginaweek/has_emails.git
 
+Mailing List
+
+* http://groups.google.com/group/pluginaweek-talk
+
 == Description
 
 Emailing between users and other parts of a system is a fairly common feature
