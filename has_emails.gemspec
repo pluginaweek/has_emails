@@ -17,4 +17,6 @@ Gem::Specification.new do |s|
   
   s.add_dependency("has_messages", ">= 0.4.0")
   s.add_dependency("validates_as_email_address", ">= 0.0.2")
+  s.add_development_dependency("rake")
+  s.add_development_dependency("plugin_test_helper", ">= 0.3.2")
 end
