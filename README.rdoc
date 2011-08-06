@@ -1,4 +1,4 @@
-= has_emails
+= has_emails http://travis-ci.org/pluginaweek/has_emails.png
 
 +has_emails+ demonstrates a reference implementation for sending emails with
 logging and asynchronous support.
@@ -16,6 +16,10 @@ Bugs
 Development
 
 * http://github.com/pluginaweek/has_emails
+
+Testing
+
+* http://travis-ci.org/pluginaweek/has_emails
 
 Source
 
